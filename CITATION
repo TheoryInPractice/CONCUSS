@@ -7,12 +7,23 @@ Software Citation
 
 If you use the CONCUSS software, you must cite:
 
-M.P. O'Brien, C.G. Hobbs, K. Jasnick, F. Reidl, N.G. Rodrigues, and B.D. Sullivan. CONCUSS: Combatting Network Complexity Using Structural Sparsity v1.0, 2015.
+M.P. O'Brien, C.G. Hobbs, K. Jasnick, F. Reidl, N.G. Rodrigues, and B.D. Sullivan. (2015). CONCUSS: Version 1.0. Zenodo. 10.5281/zenodo.30281 
 
-This release will be assigned a DOI using Zenodo, which can be found in the repository's home (README.md) 
-at https://github.com/theoryinpractice/CONCUSS. To the end of your bibliography entry, you should append 
-DOI 10.xxx/zenodo.xxx (where x's are replaced with the current identifier).
+..code-block::tex
 
+@misc{CONCUSS_v1.0,
+  author       = {Michael P. O'Brien and
+                  Clayton G. Hobbs and
+                  Kevin Jasnick  and
+                  Felix Reidl and
+                  Nishant G. Rodrigues and
+                  Blair D. Sullivan},
+  title        = {CONCUSS: Version 1.0},
+  month        = sep,
+  year         = 2015,
+  doi          = {10.5281/zenodo.30281},
+  url          = {http://dx.doi.org/10.5281/zenodo.30281}
+}
 
 If you use any of our published algorithms or heuristics you should *also*
 cite the relevant paper(s) as directed below.

@@ -88,6 +88,7 @@ See the [testing documentation](/docs/testing.md) for additional instructions.
 ## Citation and License
 
 **Important**: CONCUSS is *research software*, so you should cite us when you use it in scientific publications! Please see the CITATION file for citation information.
+[![DOI](https://zenodo.org/badge/18042/TheoryInPractice/CONCUSS.svg)](https://zenodo.org/badge/latestdoi/18042/TheoryInPractice/CONCUSS)
 
 CONCUSS is released under the BSD license; see the LICENSE file. Distribution, modification and redistribution, and incorporation into other software is allowed.
 
