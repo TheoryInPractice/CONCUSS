@@ -1,0 +1,44 @@
+*********
+Citations
+*********
+
+Software Citation
+=================
+
+If you use the CONCUSS software, you must cite:
+
+M.P. O'Brien, C.G. Hobbs, K. Jasnick, F. Reidl, N.G. Rodrigues, and B.D. Sullivan. CONCUSS: Combatting Network Complexity Using Structural Sparsity v1.0, 2015.
+
+This release will be assigned a DOI using Zenodo, which can be found in the repository's home (README.md) 
+at https://github.com/theoryinpractice/CONCUSS. To the end of your bibliography entry, you should append 
+DOI 10.xxx/zenodo.xxx (where x's are replaced with the current identifier).
+
+
+If you use any of our published algorithms or heuristics you should *also*
+cite the relevant paper(s) as directed below.
+
+Pattern Counting (Subgraph Isomorphism) 
+===========================================================
+
+The methods in lib:pattern_counting (which are used in the main pipeline :program:`concuss.py`) implements the bounded-treedepth subgraph isomorphism algorithm described in:
+
+   E. Demaine, F. Reidl, P. Rossmanith, F. Sanchez Villaamil, S. Sikdar, and B. D. Sullivan. 
+   Structural sparsity of complex networks: random graph models and linear algorithms. 
+   ArXiv:1406.2587. 2015.
+
+.. code-block:: tex
+
+  @article{DemaineRRVSS14,
+  author    = {Erik D. Demaine and
+               Felix Reidl and
+               Peter Rossmanith and
+               Fernando Sanchez Villaamil and
+               Somnath Sikdar and
+               Blair D. Sullivan},
+  title     = {Structural Sparsity of Complex Networks: Random Graph Models and Linear
+               Algorithms},
+  journal   = {CoRR},
+  volume    = {abs/1406.2587},
+  year      = {2014},
+  url       = {http://arxiv.org/abs/1406.2587},
+}
