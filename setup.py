@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name='CONCUSS', 
     version='1.0', 
-    description='Controlling Network Complexity Using Structural Sparsity',
+    description='Combatting Network Complexity Using Structural Sparsity',
     author= 'Michael P. O\'Brien, Clayton G. Hobbs, Kevin Jasnik, Felix Reidl, Nishant G. Rodrigues, and Blair D. Sullivan',
     author_email='blair_sullivan@ncsu.edu', 
     url='https://www.github.com/theoryinpractice/CONCUSS',
