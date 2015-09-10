@@ -37,6 +37,9 @@ def main():
     parser.add_argument("-C", "--coloring-no-verify",
                         help="do not verify correctness of existing coloring",
                         action="store_true")
+    parser.add_argument("-m", "--motif",
+                        help="Specify a motif name and number of vertices to be used",
+                        nargs=2)
 
     # Parse the arguments provided by the user to pass them to the
     # runPipeline method
