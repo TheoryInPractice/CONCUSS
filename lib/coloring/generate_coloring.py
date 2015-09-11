@@ -13,6 +13,7 @@ import argparse
 #import ConfigParser
 from lib.util.parse_config_safe import parse_config_safe
 from lib.graph.graph import Coloring
+from lib.coloring.basic.merge_colors import merge_colors
 
 #Config = ConfigParser.ConfigParser()
 
@@ -110,11 +111,11 @@ class CCAlgorithm(object):
 
         if self.preprocess:
             self.echo("Preprocess coloring optimizations")
-            rawgraph, postprocess = self.preprocess(rawgraph)
+            pp_graph, postprocess = self.preprocess(rawgraph)
 
         # Normalize graph so that its vertices are named 0, ..., n-1
-        rawgraph.remove_loops()
-        orig, mapping = rawgraph.normalize()
+        pp_graph.remove_loops()
+        orig, mapping = pp_graph.normalize()
         for i in xrange(0, len(orig)):
             assert i in orig, "Vertex {0} not contained in " \
                     "norm. graph of size {1}".format(i, len(orig))
@@ -155,9 +156,13 @@ class CCAlgorithm(object):
         if self.preprocess:
             self.echo("Postprocessing")
             postprocess(colrenamed)
-            self.echo("number of colors:", len(col))
+            self.echo("number of colors:", len(colrenamed))
 
-        return colrenamed
+        self.echo("Merging color classes")
+        col_merged = merge_colors(rawgraph, colrenamed, treeDepth)
+        self.echo("number of colors:", len(col_merged))
+
+        return col_merged
     # end def
 
 # end classgit
@@ -182,7 +187,7 @@ if __name__ == '__main__':
     parser.add_argument("graph", help="filename of the graph", type=str)
     parser.add_argument("treeDepth", help="tree depth", type=int)
     parser.add_argument("config", help="filename of the config file", type=str,
-                        nargs='?', default='config/basicTFA.cfg')
+                        nargs='?', default='config/default.cfg')
     parser.add_argument("-o", "--output", help="filename of the result",
                         type=str, nargs='?', default=None)
     args = parser.parse_args()
