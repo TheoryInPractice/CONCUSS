@@ -51,10 +51,10 @@ def coloring_from_file(filename, graph, td, cfgfile, verbose, verify=False):
         if verbose:
             print "Verifying coloring..."
 
-        Config = parse_config_safe(cfgParser)
-        ldo = import_colmodules(Config.get('modules',
+        Config = parse_config_safe(cfgfile)
+        ldo = import_colmodules(Config.get('color',
                                            'low_degree_orientation'))
-        ctd = import_colmodules(Config.get('modules',
+        ctd = import_colmodules(Config.get('color',
                                            'check_tree_depth'))
         orig, _ = graph.normalize()
 
