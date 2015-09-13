@@ -8,6 +8,7 @@
 
 import argparse
 from lib.run_pipeline import runPipeline
+import sys
 
 
 def main():
@@ -19,10 +20,11 @@ def main():
     parser = argparse.ArgumentParser()
 
     # Add arguments to the argument parser
-    parser.add_argument("graph", help="filename of the large graph", type=str)
-    parser.add_argument("pattern", help="filename of the pattern graph",
-                        type=str)
-    parser.add_argument("config",
+    parser.add_argument("-g", "--graph", help="filename of the large graph",
+                        type=str, required=True)
+    parser.add_argument("-m", "--pattern", help="filename of the pattern graph",
+                        type=str, nargs="+", required=True)
+    parser.add_argument("-cfg","--config",
                         help="filename of the configuration settings",
                         nargs='?', type=str, default='config/default.cfg')
     parser.add_argument("-o", "--output", help="filename of the result",
@@ -37,9 +39,6 @@ def main():
     parser.add_argument("-C", "--coloring-no-verify",
                         help="do not verify correctness of existing coloring",
                         action="store_true")
-    parser.add_argument("-m", "--motif",
-                        help="Specify a motif name and number of vertices to be used",
-                        nargs=2)
 
     # Parse the arguments provided by the user to pass them to the
     # runPipeline method

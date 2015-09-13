@@ -18,6 +18,8 @@ from lib.pattern_counting.pattern_counter import PatternCounter
 import cProfile
 import pstats
 from lib.graph.graph import Coloring
+import lib.graph.pattern_generator as pattern_gen
+from lib.graph.treedepth import treedepth
 
 def import_modules(name):
     """
@@ -86,9 +88,25 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         readProfile = cProfile.Profile()
         readProfile.enable()
 
+    # If the user specifies the pattern name for ex. as -> clique 4
+    if len(pattern) == 2:
+        # Get pattern type and number of vertices
+        pattern_type = pattern[0]
+        pattern_num_vertices = int(pattern[1])
+        # Get the generator for that type of pattern
+        generator = pattern_gen.get_generator(pattern_type)
+        # Generate the pattern
+        H = generator(pattern_num_vertices)
+        # Compute lower bound given the pattern
+        td_lower = treedepth(H, pattern_type)
+    else:
+        # Load pattern from file
+        H = load_graph(pattern[0])
+        # Computer lower bound
+        td_lower = treedepth(H)
+
     # Read graphs from file
     G = load_graph(graph)
-    H = load_graph(pattern)
     td = len(H)
 
     G_path, G_local_name = os.path.split(graph)
@@ -134,7 +152,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
     sweep_class = import_modules('lib.decomposition.' + sweep_name)
 
     # Count patterns
-    pattern_counter = PatternCounter(G, H, coloring,
+    pattern_counter = PatternCounter(G, H, td_lower, coloring,
                                      pattern_class=patternClass,
                                      table_hints=table_hints,
                                      decomp_class=sweep_class,

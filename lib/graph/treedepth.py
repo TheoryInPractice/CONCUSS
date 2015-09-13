@@ -6,9 +6,8 @@
 
 
 import sys
-from collections import deque
 from lib.graph.graphformats import load_graph
-
+from math import ceil, log
 
 # TODO:  Get a tighter lower bound on the treedepth
 #        Could potentially use log of the length of
@@ -20,7 +19,7 @@ def treedepth(G, pattern_type=None):
     """
 
     if pattern_type:
-        return locals()[pattern_type](G)
+        return globals()[pattern_type](G)
     else:
         return max(2, G.calc_degeneracy())
 
@@ -44,8 +43,8 @@ def wheel(pattern):
     :param pattern: the pattern
     :return: the treedepth
     """
-    # TODO: Implement this
-    pass
+
+    return int(ceil(log(len(pattern) - 1, 2))) + 2
 
 
 def path(pattern):
@@ -56,10 +55,8 @@ def path(pattern):
     :return: the treedepth
     """
 
-    # Import math library
-    import math
     # return lower bound
-    return int(math.ceil(math.log(len(pattern) + 1, 2)))
+    return int(ceil(log(len(pattern) + 1, 2)))
 
 
 def clique(pattern):
@@ -83,7 +80,8 @@ def biclique(pattern):
     """
 
     # The treedepth of a biclique is the number of nodes in it
-    return len(pattern)
+    # TODO: Implement this
+    pass
 
 
 def cycle(pattern):
@@ -94,8 +92,8 @@ def cycle(pattern):
     :return: the treedepth
     """
 
-    # TODO: Implement this
-    pass
+    # return lower bound
+    return int(ceil(log(len(pattern), 2))) + 1
 
 def grid(pattern):
     """
@@ -121,4 +119,4 @@ def quasi_clique(pattern):
 
 if __name__ == "__main__":
     G = load_graph(sys.argv[1])
-    print treedepth(G)
+    print treedepth(G, "clique")
