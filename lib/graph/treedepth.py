@@ -19,8 +19,11 @@ def treedepth(G, pattern_type=None):
     """
 
     if pattern_type:
+        # return known treedepth of pattern type
         return globals()[pattern_type](G)
     else:
+        # return the degeneracy as the lower bound, or 2,
+        # whichever is larger
         return max(2, G.calc_degeneracy())
 
 
@@ -71,19 +74,6 @@ def clique(pattern):
     return len(pattern)
 
 
-def biclique(pattern):
-    """
-    Compute the lower bound on treedepth of a biclique.
-
-    :param pattern: the pattern
-    :return: the treedepth
-    """
-
-    # The treedepth of a biclique is the number of nodes in it
-    # TODO: Implement this
-    pass
-
-
 def cycle(pattern):
     """
     Compute the lower bound on treedepth of a cycle.
@@ -95,28 +85,7 @@ def cycle(pattern):
     # return lower bound
     return int(ceil(log(len(pattern), 2))) + 1
 
-def grid(pattern):
-    """
-    Compute the lower bound on treedepth of a grid.
-
-    :param pattern: the pattern
-    :return: the treedepth
-    """
-
-    # TODO: Implement this
-    pass
-
-def quasi_clique(pattern):
-    """
-    Compute the lower bound on treedepth of a quasi_clique.
-
-    :param pattern: the pattern
-    :return: the treedepth
-    """
-
-    # TODO: Implement this
-    pass
 
 if __name__ == "__main__":
     G = load_graph(sys.argv[1])
-    print treedepth(G, "clique")
+    print treedepth(G)

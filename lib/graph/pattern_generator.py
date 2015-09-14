@@ -26,14 +26,9 @@ def get_generator(pattern_name):
         return path
     elif pattern_name == "star":
         return star
-    elif pattern_name == "biclique":
-        return biclique
     elif pattern_name == "wheel":
         return wheel
-    elif pattern_name == "grid":
-        return grid
-    elif pattern_name == "quasi-clique":
-        return quasi_clique
+
 
 def clique(num_vertices):
     """
@@ -54,6 +49,7 @@ def clique(num_vertices):
     # Return the clique
     return pattern
 
+
 def cycle(num_vertices):
     """
     Creates a cycle of size num_vertices and
@@ -72,6 +68,7 @@ def cycle(num_vertices):
     # Return the cycle
     return pattern
 
+
 def path(num_vertices):
     """
     Creates a path of size num_vertices and
@@ -89,6 +86,7 @@ def path(num_vertices):
         pattern.add_edge(u, u + 1)
     # Return the path
     return pattern
+
 
 def star(num_vertices):
     """
@@ -110,6 +108,7 @@ def star(num_vertices):
     # Return the star
     return pattern
 
+
 def wheel(num_vertices):
     """
     Creates a wheel of size num_vertices and
@@ -129,33 +128,3 @@ def wheel(num_vertices):
 
     # Return the wheel
     return pattern
-
-def biclique(num_vertices):
-    """
-
-    :param num_vertices:
-    :return:
-    """
-
-    # TODO: Implement this
-    pass
-
-def grid(num_vertices):
-    """
-
-    :param num_vertices:
-    :return:
-    """
-
-    # TODO: Implement this
-    pass
-
-def quasi_clique(num_vertices):
-    """
-
-    :param num_vertices:
-    :return:
-    """
-
-    # TODO: Implement this
-    pass
