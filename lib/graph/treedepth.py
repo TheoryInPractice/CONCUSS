@@ -93,4 +93,4 @@ def cycle(pattern):
 
 if __name__ == "__main__":
     G = load_graph(sys.argv[1])
-    print treedepth(G, "nishant")
+    print treedepth(G)
