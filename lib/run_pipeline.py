@@ -92,7 +92,12 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
     if len(pattern) == 2:
         # Get pattern type and number of vertices
         pattern_type = pattern[0]
-        pattern_num_vertices = int(pattern[1])
+        try:
+            pattern_num_vertices = int(pattern[1])
+        except ValueError:
+            print "\nPlease provide an integer as the second argument " \
+                  "to the -m flag\n"
+            sys.exit(1)
         # Get the generator for that type of pattern
         generator = pattern_gen.get_generator(pattern_type)
         # Generate the pattern
