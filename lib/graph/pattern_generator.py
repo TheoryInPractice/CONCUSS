@@ -7,6 +7,7 @@
 #
 
 from lib.graph.graph import Graph
+import sys
 
 def get_generator(pattern_name):
     """
@@ -28,6 +29,10 @@ def get_generator(pattern_name):
         return star
     elif pattern_name == "wheel":
         return wheel
+    else:
+        print "\nPattern name should be one of these:\n" \
+                  "\nclique\ncycle\nwheel\nstar\npath\n"
+        sys.exit(1)
 
 
 def clique(num_vertices):

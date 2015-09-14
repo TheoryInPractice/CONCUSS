@@ -20,7 +20,12 @@ def treedepth(G, pattern_type=None):
 
     if pattern_type:
         # return known treedepth of pattern type
-        return globals()[pattern_type](G)
+        try:
+            return globals()[pattern_type](G)
+        except KeyError:
+            print "\nPattern type should be one of these:\n" \
+                  "\nclique\ncycle\nwheel\nstar\npath\n"
+            sys.exit(1)
     else:
         # return the degeneracy as the lower bound, or 2,
         # whichever is larger
@@ -88,4 +93,4 @@ def cycle(pattern):
 
 if __name__ == "__main__":
     G = load_graph(sys.argv[1])
-    print treedepth(G)
+    print treedepth(G, "nishant")
