@@ -33,9 +33,14 @@ def truncated_tf_augmentation(orig, g, trans, frat, col, nodes,
         g.add_arc(s, t, step)
         fratGraph.remove_edge(s, t)
 
-    indegs = {}
+    indegs = []
     for v in g:
-        indegs[v] = g.in_degree(v)
+        #Flexible  indegs[v] = g.in_degree(v)
+        if i < len(indegs):
+            indegs[v] = g.in_degree(v)
+        else:
+            indegs.extend([0 for x in range(len(indegs), v)])
+            indegs.insert( v, g.in_degree(v) )
 
     fratDigraph = ldoFunc(fratGraph, indegs)
 
