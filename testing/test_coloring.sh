@@ -10,16 +10,16 @@
 
 . $(dirname $(which $0))/test_common.sh
 
-color_graph $1 $2 config/so_tfa_max
-color_graph $1 $2 config/so_tfa_min
-color_graph $1 $2 config/so_tfa_dsat
-color_graph $1 $2 config/so_dtfa_max
-color_graph $1 $2 config/so_dtfa_min
-color_graph $1 $2 config/so_dtfa_dsat
-color_graph $1 $2 config/ldo_tfa_max
-color_graph $1 $2 config/ldo_tfa_min
-color_graph $1 $2 config/ldo_tfa_dsat
-color_graph $1 $2 config/ldo_dtfa_max
-color_graph $1 $2 config/ldo_dtfa_min
-color_graph $1 $2 config/ldo_dtfa_dsat
+color_graph $1 $2 config/so_tfa_max.cfg
+color_graph $1 $2 config/so_tfa_min.cfg
+color_graph $1 $2 config/so_tfa_dsat.cfg
+color_graph $1 $2 config/so_dtfa_max.cfg
+color_graph $1 $2 config/so_dtfa_min.cfg
+color_graph $1 $2 config/so_dtfa_dsat.cfg
+color_graph $1 $2 config/ldo_tfa_max.cfg
+color_graph $1 $2 config/ldo_tfa_min.cfg
+color_graph $1 $2 config/ldo_tfa_dsat.cfg
+color_graph $1 $2 config/ldo_dtfa_max.cfg
+color_graph $1 $2 config/ldo_dtfa_min.cfg
+color_graph $1 $2 config/ldo_dtfa_dsat.cfg
 
