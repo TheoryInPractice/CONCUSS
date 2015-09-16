@@ -11,7 +11,7 @@ Count the number of subgraphs of "graph" which are isomorphic to "pattern".
 Positional arguments:
 
 * `graph` - filename of the host graph
-* `pattern` - filename of the pattern graph
+* `pattern` - filename or basic pattern. Basic pattern specified as: `pattern_nameint`. See example below.
 * `config` - filename of the configuration settings (defaults to `config/default.cfg`)
 
 Optional arguments:
@@ -27,8 +27,14 @@ Optional arguments:
 
 Example command:
 
+Using pattern file:
+	
 	./concuss.py testing/graphs/karate.txt testing/graphs/motifs/K3.txt
 
+Using basic pattern:
+	
+	./concuss.py testing/graphs/karate.txt clique3
+	
 Example output:
 
 	Number of occurrences of H in G: 270

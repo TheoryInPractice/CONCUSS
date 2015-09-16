@@ -6,8 +6,23 @@
 # the three-clause BSD license; see LICENSE.
 #
 
-from lib.graph.graph import Graph
+from graph import Graph
 import sys
+
+
+# Global dictionary of supported patterns
+# Represented as -
+# key: pattern name
+# value: method name for generating pattern
+supported_patterns = {"clique": "clique",
+                      "path": "path",
+                      "star": "star",
+                      "wheel": "wheel",
+                      "cycle": "cycle",
+                      "biclique": "biclique"}
+
+bipartite_patterns = ["biclique"]
+
 
 def get_generator(pattern_name):
     """
@@ -18,21 +33,7 @@ def get_generator(pattern_name):
     :param pattern_name: Name of pattern
     :return: Callback to method that generates the pattern
     """
-
-    if pattern_name == "clique":
-        return clique
-    elif pattern_name == "cycle":
-        return cycle
-    elif pattern_name == "path":
-        return path
-    elif pattern_name == "star":
-        return star
-    elif pattern_name == "wheel":
-        return wheel
-    else:
-        print "\nPattern name should be one of these:\n" \
-                  "\nclique\ncycle\nwheel\nstar\npath\n"
-        sys.exit(1)
+    return getattr(sys.modules[__name__], supported_patterns[pattern_name])
 
 
 def clique(num_vertices):
@@ -132,4 +133,24 @@ def wheel(num_vertices):
         pattern.add_edge(v, middle_vertex)
 
     # Return the wheel
+    return pattern
+
+def biclique(m, n):
+    """
+    Creates a biclique of size m + n and
+    returns a Graph object representing it
+
+    :param m: The number of vertices in the first set
+    :param n: The number of vertices in the second set
+    :return: A Graph object representing the biclique
+
+    """
+
+    # Instantiate a Graph
+    pattern = Graph()
+    for u in range(m):
+        for v in range(m, m + n):
+            pattern.add_edge(u, v)
+
+    # Return the biclique
     return pattern
