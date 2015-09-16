@@ -19,20 +19,20 @@ test_pipeline() {
 	filename="/tmp/concuss_out_${replaced_config}.txt"
 	# Run concuss.py with profiling, keeping only the "Stats from" lines
 	# and the one line after them
-	${path}/../concuss.py $args "${path}/${1}.cfg" -c "${coloring_file}" -C -p > "${filename}"
+	${path}/../concuss.py $args "${path}/${1}" -c "${coloring_file}" -C -p > "${filename}"
 	grep -A1 "Stats from" "${filename}" | remove_grep_separator | tee "/tmp/concuss_test_${replaced_config}.txt"
 	grep "Number of occurrences" "${filename}"
 }
 
 run_nx_test
-color_graph $1 $2 ../config/default
-run_test config/fast_comb_cc
-run_test config/fast_comb_icc
-run_test config/fast_comb_inex
-run_test config/fast_comb_hybrid
-run_test config/fast_comb_ihybrid
-run_test config/fast_cs_cc
-run_test config/fast_cs_icc
-run_test config/fast_cs_inex
-run_test config/fast_cs_hybrid
-run_test config/fast_cs_ihybrid
+color_graph $1 $2 ../config/default.cfg
+run_test config/fast_comb_cc.cfg
+run_test config/fast_comb_icc.cfg
+run_test config/fast_comb_inex.cfg
+run_test config/fast_comb_hybrid.cfg
+run_test config/fast_comb_ihybrid.cfg
+run_test config/fast_cs_cc.cfg
+run_test config/fast_cs_icc.cfg
+run_test config/fast_cs_inex.cfg
+run_test config/fast_cs_hybrid.cfg
+run_test config/fast_cs_ihybrid.cfg
