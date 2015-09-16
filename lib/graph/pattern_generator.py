@@ -6,7 +6,7 @@
 # the three-clause BSD license; see LICENSE.
 #
 
-from graph import Graph
+from lib.graph.graph import Graph
 import sys
 
 

@@ -11,7 +11,7 @@ Count the number of subgraphs of "graph" which are isomorphic to "pattern".
 Positional arguments:
 
 * `graph` - filename of the host graph
-* `pattern` - filename or basic pattern. Basic pattern specified as: `pattern_nameint` or `pattern_nameint,int`. The ints specify number of vertices. See example below.
+* `pattern` - filename or basic pattern. Basic pattern specified as: `pattern_nameint` or `pattern_nameint,int`. The `int`s specify number of vertices. See example below.
 * `config` - filename of the configuration settings (defaults to `config/default.cfg`)
 
 Optional arguments:
