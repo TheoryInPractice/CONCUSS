@@ -66,7 +66,12 @@ color_graph() {
 	size=$(${path}/graph_size.py $2)
 	filename=$(basename "$1")
 	coloring_file="${path}/colorings/${filename%.*}${size}"
-	config_file="${path}/$3.cfg"
+	if [ "$#" -lt 3 ]; then
+		conf="../config/default.cfg"
+	else
+		conf="$3"
+	fi
+	config_file="${path}/${conf}"
 	${path}/../lib/coloring/generate_coloring.py $1 $size ${config_file} -o ${coloring_file}
 	echo
 }
