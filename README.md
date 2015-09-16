@@ -11,7 +11,7 @@ Count the number of subgraphs of "graph" which are isomorphic to "pattern".
 Positional arguments:
 
 * `graph` - filename of the host graph
-* `pattern` - filename or basic pattern. Basic pattern specified as: `pattern_nameint`. See example below.
+* `pattern` - filename or basic pattern. Basic pattern specified as: `pattern_nameint` or `pattern_nameint,int`. The ints specify number of vertices. See example below.
 * `config` - filename of the configuration settings (defaults to `config/default.cfg`)
 
 Optional arguments:
@@ -41,6 +41,14 @@ Example output:
 
 This means that there are 270 isomorphisms of K3 (a triangle) in the karate network.  Since the triangle has 3 automorphisms, the karate network has 90 distinct triangles.
 
+Using bipartite basic pattern:
+	
+	./concuss.py testing/graphs/karate.txt biclique2,2
+	
+Example output:
+	
+	Number of occurrences of H in G: 288
+	
 ## Install and Software Requirements
 
 CONCUSS requires a 64-bit operating system and Python 2.7.x interpreter (e.g. CPython or PyPy).  
