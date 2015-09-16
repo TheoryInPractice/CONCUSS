@@ -32,6 +32,7 @@ def get_generator(pattern_name):
 
     :param pattern_name: Name of pattern
     :return: Callback to method that generates the pattern
+    :throws: KeyError if pattern_name is not supported
     """
     return getattr(sys.modules[__name__], supported_patterns[pattern_name])
 

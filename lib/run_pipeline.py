@@ -128,7 +128,7 @@ def parse_pattern_argument(pattern):
                 # Generate the pattern
                 H = generator(pattern_num_vertices)
                 # Return the pattern along with its treedepth
-                return H, treedepth(H, [args[0], pattern_num_vertices])
+                return H, treedepth(H, args[0], pattern_num_vertices)
             except KeyError:
                 pattern_argument_error_msg()
 
@@ -143,7 +143,7 @@ def parse_pattern_argument(pattern):
                 # Generate the pattern
                 H = generator(m, n)
                 # Return the pattern along with its treedepth
-                return H, treedepth(H, [args[0], min(m,n)])
+                return H, treedepth(H, args[0], m, n)
             except (KeyError, ValueError):
                 # Invalid sizes provided
                 pattern_argument_error_msg()
