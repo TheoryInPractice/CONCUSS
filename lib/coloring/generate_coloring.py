@@ -34,7 +34,8 @@ def save_file(col, filename, override=False, verbose=False):
                         print "don't override (before:", before, ", now:", num, ")"
         else:
             override = True
-            print "there is still no coloring, create result"
+            if verbose: 
+                print "there is still no coloring, create result"
 
     if override:
         with open(filename, 'w') as f:

@@ -10,7 +10,7 @@ import networkx as nx
 from networkx.algorithms import isomorphism
 import cProfile
 import pstats
-from lib.run_pipeline import printProfileStats
+
 # If we're running PyPy, make sure we can load networkx
 if 'PyPy' in sys.version:
     sys.path.insert(0, '/usr/lib/python2.7/site-packages')
@@ -33,6 +33,23 @@ def readGraph(filename, type):
         return nx.read_json(filename, create_using=type)
     else:
         raise Exception("File format .{0} not supported".format(extension))
+
+def printProfileStats(name, profile, percent=1.0):
+    """
+    Prints out the function call statistics using the cProfile and
+    pstats libraries
+
+    Arguments:
+        name:  string labelling the purpose of the statistics
+        profile:  cProfile to print
+        percent:  decimal proportion of list to print.  Default prints
+                all (1.0)
+    """
+    sortby = 'time'
+    restrictions = ""
+    ps = pstats.Stats(profile).strip_dirs().sort_stats(sortby)
+    print "Stats from {0}".format(name)
+    ps.print_stats(restrictions, percent)
 
 if __name__ == "__main__":
     G_file = sys.argv[1]
