@@ -36,7 +36,7 @@ def truncated_tf_augmentation(orig, g, trans, frat, col, nodes,
     indegs = []
     for v in g:
         #Flexible  indegs[v] = g.in_degree(v)
-        if i < len(indegs):
+        if v < len(indegs):
             indegs[v] = g.in_degree(v)
         else:
             indegs.extend([0 for x in range(len(indegs), v)])

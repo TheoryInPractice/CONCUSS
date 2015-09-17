@@ -8,7 +8,7 @@
 
 
 from lib.util.memorized import memorized
-import collections
+from collections import defaultdict
 from lib.graph.graph import TFGraph
 
 
@@ -21,7 +21,7 @@ def sandpile_orientation(g, weight=None):
         return res
 
     if weight is None:
-        weight = []
+        weight = defaultdict( int )
 
     deglist = []
     buckets = []
@@ -39,7 +39,7 @@ def sandpile_orientation(g, weight=None):
             buckets[d].add(v)
         else:
             buckets.extend([set() for x in range(len(buckets), d)])
-            buckets.insert(d,set(v))
+            buckets.insert(d,{v})
 
     seen = set()
     for i in xrange(0, len(g)):

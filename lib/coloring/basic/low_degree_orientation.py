@@ -9,6 +9,7 @@
 
 from lib.util.memorized import memorized
 from lib.graph.graph import TFGraph
+from collections import defaultdict
 
 
 # Generate a low degree orientation of the graph additional
@@ -17,7 +18,7 @@ def low_degree_orientation(g, weight=None):
     res = TFGraph(g.nodes)
 
     if weight is None:
-        weight = []
+        weight = defaultdict( int )
 
     deglist = []
     buckets = []
@@ -36,7 +37,7 @@ def low_degree_orientation(g, weight=None):
             buckets[d].add(v)
         else:
             buckets.extend([set() for x in range(len(buckets), d)])
-            buckets.insert(d,set(v))
+            buckets.insert(d,{v})
 
     seen = set()
     for i in xrange(0, len(g)):
