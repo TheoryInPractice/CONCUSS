@@ -106,7 +106,7 @@ class DFSSweep(DecompGenerator):
                 color added to combination
 
         """
-
+        print data.colors_in_combi
         # Check to see if we are at p-1 colors, if so generate all combinations
         # with added pth color
         if len(data.colors_in_combi) == self.p - 1:
@@ -344,6 +344,7 @@ class DFSSweep(DecompGenerator):
                 ufs[v] = (1 << 2) | self.UFS_TYPE_ROOT
                 comps[v] = frozenset([v])
 
+            for v in data.wscolorlist[color].nodes:
                 # For each newly added vertex, find its neighbors
                 # and check to see if it already belongs to some component
                 for u in self.G.neighbours(v):
@@ -369,7 +370,14 @@ class DFSSweep(DecompGenerator):
                             ufs[d] = self.UFS_TYPE_CHILD | (a << 2)
 
                             # Move all of "d's" elements to "a"
-                            comps[a] |= comps[d]
+                            try:
+                                comps[a] |= comps[d]
+                            except KeyError as e:
+                                print a, d
+                                print sorted(comps.keys())
+                                print data.wscolorlist[color].nodes
+                                print data.colors_in_combi
+                                raise e
                             # Delete key since we don't need it anymore
                             del comps[d]
 
