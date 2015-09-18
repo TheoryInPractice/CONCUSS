@@ -47,9 +47,8 @@ def merge_colors(graph, cols, p):
 
     # create lookup of vertices by color
     color_sets = [set() for i in ordered_col.colors()]
-    for v in ordered_col:
+    for v in graph:
         color_sets[ordered_col[v]].add(v)
-
     num_colors = len(ordered_col)
     echo(len(ordered_col))
     # iterate through all colors
