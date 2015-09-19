@@ -32,5 +32,6 @@ def trim_high_degree(g):
             coloring[v] = 0
         for v in high_degree:
             coloring[v] = len(coloring)+1
+        return coloring.normalize()
 
     return gsmall, restore_high_degree
