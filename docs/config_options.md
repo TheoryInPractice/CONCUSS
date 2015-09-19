@@ -88,10 +88,13 @@ These modules take an existing *p*-centered coloring and attempt to reduce the n
 ### `preprocess`
 These modules preprocess the graph in order to give a better coloring.
 
-- **`basic.trim_high_degree`**
+- `basic.trim_high_degree`
 
 	Remove vertices whose degrees are above some threshold (default to 4 times the 4th root of *n*).
 	After performing the desired coloring on the remainder of the graph, replace the removed vertices and give them each a unique color.
+
+- **`basic.trim_low_and_high_degree`**
+	Same as `basic.trim_high_degree`, but also removes vertices of degree 1 and gives them all the same (unique) color when added back.
 
 ### `sweep`
 These modules determine the order in which the sets of colors are analyzed.

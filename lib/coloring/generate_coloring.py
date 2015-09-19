@@ -156,11 +156,12 @@ class CCAlgorithm(object):
 
         if self.preprocess:
             self.echo("Postprocessing")
-            postprocess(colrenamed)
-            self.echo("number of colors:", len(colrenamed))
+            col_restored = postprocess(colrenamed)
+            self.echo("number of colors:", len(col_restored))
+
 
         self.echo("Merging color classes")
-        col_merged = merge_colors(rawgraph, colrenamed, treeDepth)
+        col_merged = merge_colors(rawgraph, col_restored, treeDepth)
         self.echo("number of colors:", len(col_merged))
 
         return col_merged
