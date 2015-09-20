@@ -11,7 +11,7 @@ Count the number of subgraphs of "graph" which are isomorphic to "pattern".
 Positional arguments:
 
 * `graph` - filename of the host graph
-* `pattern` - filename or basic pattern. Basic pattern specified as: `pattern_nameint` or `pattern_nameint,int`. The `int`s specify number of vertices. See example below.
+* `pattern` - filename or basic pattern. See basic patterns section below.
 * `config` - filename of the configuration settings (defaults to `config/default.cfg`)
 
 Optional arguments:
@@ -30,10 +30,6 @@ Example command:
 Using pattern file:
 	
 	./concuss.py testing/graphs/karate.txt testing/graphs/motifs/K3.txt
-
-Using basic pattern:
-	
-	./concuss.py testing/graphs/karate.txt clique3
 	
 Example output:
 
@@ -41,14 +37,51 @@ Example output:
 
 This means that there are 270 isomorphisms of K3 (a triangle) in the karate network.  Since the triangle has 3 automorphisms, the karate network has 90 distinct triangles.
 
-Using bipartite basic pattern:
+
+### Basic patterns:
+
+CONCUSS can be run by providing a basic pattern instead of a pattern file for the `pattern` argument in the execution command. All other positional and optional arguments remain unchanged.
+
+Basic patterns provide a faster and simpler way of specifying patterns to search for in the graph.
+
+We provide the following commonly used basic patterns:
+
+**1-partite basic patterns:**
+
+<code>clique <br> wheel <br> cycle <br> path <br> star</code>
+
+Usage:
+
+	.concuss.py {path_to_graph}/graph basicpattern|int
 	
+`|` represents concatenation. The `int` specifies the number of vertices in pattern.
+
+Example command:
+
+	./concuss.py testing/graphs/karate.txt star4
+	
+Example output:
+
+	Number of occurrences of H in G: 6588
+
+**Bi-partite basic patterns:**
+
+<code> biclique</code>
+
+Usage:
+
+	.concuss.py {path_to_graph}/graph basicpattern|int,int
+	
+`|` represents concatenation. The `ints` specify the number of vertices in the first and second sets of the bi-partite pattern.
+
+Example command:
+
 	./concuss.py testing/graphs/karate.txt biclique2,2
 	
 Example output:
-	
+
 	Number of occurrences of H in G: 288
-	
+
 ## Install and Software Requirements
 
 CONCUSS requires a 64-bit operating system and Python 2.7.x interpreter (e.g. CPython or PyPy).  
