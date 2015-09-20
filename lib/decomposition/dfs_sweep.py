@@ -257,7 +257,7 @@ class DFSSweep(DecompGenerator):
         """
 
         # Initialize an empty dictionary to store the components
-        comps = {}
+        comps = []
 
         # Build the dictionary
         ufs = data.union_find[data.current_depth]
@@ -266,19 +266,23 @@ class DFSSweep(DecompGenerator):
             if elem == 0:
                 continue
             # This is a root, so make new dictionary entry for this root
-            elif elem % 2 != 0:
-                if idx not in comps:
-                    comps[idx] = {idx}
+            elif elem % 2 != 0:                    
+                # Flexible  comps[idx] = {idx}
+                if idx >= len(comps):
+                    comps.extend([{x} for x in range(len(comps), idx)])
+                    comps.insert(idx,{idx})
             # This is a child, find its root, and add to appropriate set
             else:
                 root = self.ufs_find(ufs, idx)
-                if root not in comps:
-                    comps[root] = {root}
+                # Flexible  comps[root] = {root}
+                if root >= len(comps):
+                    comps.extend([{x} for x in range(len(comps), root)])
+                    comps.insert(root,{root})
 
                 comps[root].add(idx)
 
         # Generate components while also pruning ones we don't need
-        for item in comps.itervalues():
+        for item in comps:
             if not self.prune(item, self.p):
                 yield item
 

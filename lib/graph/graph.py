@@ -222,7 +222,7 @@ def coloring_from_pickle(lst):
 class Graph(object):
     def __init__(self):
         """ Initialize the graph object """
-        self.adj = defaultdict(set)
+        self.adj = []
         self.nodes = set()
 
     def __contains__(self, u):
@@ -276,8 +276,18 @@ class Graph(object):
         """
         self.nodes.add(u)
         self.nodes.add(v)
-        self.adj[u].add(v)
-        self.adj[v].add(u)
+
+        if u < len(self.adj):
+            self.adj[u].add(v)
+        else:
+            self.adj.extend([set() for x in range(len(self.adj), u + 1)])
+            self.adj[u].add(v)
+
+        if v < len(self.adj):
+            self.adj[v].add(u)
+        else:
+            self.adj.extend([set() for x in range(len(self.adj), v + 1)])
+            self.adj[v].add(u)
 
     def remove_edge(self, u, v):
         """
@@ -287,8 +297,10 @@ class Graph(object):
         :param v: Vertex 2 in edge
 
         """
-        self.adj[u].discard(v)
-        self.adj[v].discard(u)
+        if u < len(self.adj):
+            self.adj[u].discard(v)
+        if v < len(self.adj):
+            self.adj[v].discard(u)
 
     def remove_loops(self):
         """
@@ -354,8 +366,9 @@ class Graph(object):
         :return: A dictionary where degrees are keys and
                  number of vertices with that degree are values
         """
-        res = defaultdict(int)
+        res = []
         for u in self.nodes:
+            res.extend([0 for x in range(len(res), u + 1)])
             res[self.degree(u)] += 1
         return res
 
@@ -372,10 +385,10 @@ class Graph(object):
         total = 0
         dd = self.degree_dist()
         n = len(self)
-        res = {0: dd[0]}
+        res = [dd[0]]
         while total < n:
             total = res[i - 1] + dd[i]
-            res[i] = total
+            res.append( total )
             i = i + 1
         return res
 
@@ -394,15 +407,17 @@ class Graph(object):
         :return: The degeneracy of the graph
         """
 
-        degbuckets = defaultdict(set)
-        degrees = {}
+        degbuckets = []
+        degrees = []
         degen = 0
         mindeg = n = len(self)
         removed = set()
         for v in self:
             deg = self.degree(v)
             mindeg = min(mindeg, deg)
+            degbuckets.extend([set() for x in range(len(degbuckets), deg + 1)])
             degbuckets[deg].add(v)
+            degrees.extend([set() for x in range(len(degrees), v + 1)])
             degrees[v] = deg
 
         while len(removed) < n:
