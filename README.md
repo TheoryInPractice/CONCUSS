@@ -48,7 +48,7 @@ We provide the following commonly used basic patterns:
 
 **1-partite basic patterns:**
 
-<code>clique <br> wheel <br> cycle <br> path <br> star</code>
+<code>clique wheel cycle path star</code>
 
 Usage:
 
@@ -66,11 +66,11 @@ Example output:
 
 **Bi-partite basic patterns:**
 
-<code> biclique</code>
+<code>biclique</code>
 
 Usage:
 
-	.concuss.py {path_to_graph}/graph basicpattern|int,int
+	./concuss.py {path_to_graph}/graph basicpattern|int,int
 	
 `|` represents concatenation. The `ints` specify the number of vertices in the first and second sets of the bi-partite pattern.
 
