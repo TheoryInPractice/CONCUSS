@@ -13,11 +13,12 @@ import ConfigParser
 from lib.graph import graph
 from lib.coloring.coloring import *
 from lib.graph.graphformats import load_graph
+from lib.run_pipeline import parse_pattern_argument
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("pattern", help="filename of the pattern graph",
                         type=str)
     args = parser.parse_args()
-    h = load_graph(args.pattern)
+    h, _ = parse_pattern_argument(args.pattern)
     print len(h)

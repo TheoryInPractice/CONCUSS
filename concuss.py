@@ -8,6 +8,7 @@
 
 import argparse
 from lib.run_pipeline import runPipeline
+import sys
 
 
 def main():
@@ -19,7 +20,8 @@ def main():
     parser = argparse.ArgumentParser()
 
     # Add arguments to the argument parser
-    parser.add_argument("graph", help="filename of the large graph", type=str)
+    parser.add_argument("graph", help="filename of the large graph",
+                        type=str)
     parser.add_argument("pattern", help="filename of the pattern graph",
                         type=str)
     parser.add_argument("config",
