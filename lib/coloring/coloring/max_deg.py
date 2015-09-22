@@ -12,28 +12,27 @@ from lib.coloring.coloring.ordering import color_by_ordering, \
 
 def max_deg(orig, g, trans, frat, col, silent=True):
     undir_g = g.undirected()
-    degBuckets = {}
+    degBuckets = []
     degrees = {}  # Keep track of remaining degree
     maxdegree = 0
     for v in undir_g:
         d = undir_g.degree(v)
-        if d not in degBuckets:
-            degBuckets[d] = set()
+        if d >= len(degBuckets):
+            degBuckets.extend([set() for x in range(len(degBuckets), d + 1)])
         degBuckets[d].add(v)
         degrees[v] = d
         maxdegree = max(maxdegree, d)
 
     for d in xrange(0, maxdegree+1):
-        if d not in degBuckets:
-            degBuckets[d] = set()
+        if d >= len(degBuckets):
+            degBuckets.extend([set() for x in range(len(degBuckets), d + 1)])
 
     def vchoice(uncolored, coloring, graph):
         maxdeg = maxdegree
         while len(degBuckets[maxdeg]) == 0:
             maxdeg -= 1
 
-        v = iter(degBuckets[maxdeg]).next()  # Just get any
-        degBuckets[maxdeg].remove(v)
+        v = degBuckets[maxdeg].pop()
 
         # Update neighbours
         for w in graph.neighbours(v):

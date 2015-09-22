@@ -37,8 +37,10 @@ class BVKPattern(KPattern):
         self.nullMask = (2 ** (self.idBitLength)) - 1
         # initialize bijection of vertices to integers
         self.intMapping = sorted(iter(self.graph))
-        self.vertexMapping = {v: num for (num, v) in
-                              enumerate(self.intMapping)}
+        self.vertexMapping = []
+        for (num, v) in enumerate(self.intMapping):
+            self.vertexMapping.extend([0 for x in range(len(self.vertexMapping), v + 1)])
+            self.vertexMapping[v] = num
 
         # initialize boundary
         if vertices is None:
@@ -229,7 +231,7 @@ class BVKPattern(KPattern):
         vertex set
         """
         nonBoundaryVertices = self.vertices - self.boundaryVertices
-        for v, i in self.vertexMapping.iteritems():
+        for v, i in enumerate(self.vertexMapping):
             # check only the vertices part of the non-boundary
             if nonBoundaryVertices & (1 << i) > 0:
                 # ensure each neighbor is in the pattern
