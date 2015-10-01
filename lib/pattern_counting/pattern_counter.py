@@ -22,7 +22,7 @@ class PatternCounter(object):
     the final count from the whole graph.
     """
 
-    def __init__(self, G, H, coloring, pattern_class=KPattern, table_hints={},
+    def __init__(self, G, H, td_lower, coloring, pattern_class=KPattern, table_hints={},
                  decomp_class=CombinationsSweep,
                  combiner_class=InclusionExclusion, verbose=False):
         """
@@ -44,7 +44,7 @@ class PatternCounter(object):
         self.pattern_class = pattern_class
         self.verbose = verbose
 
-        self.combiner = combiner_class(len(H), coloring, table_hints, td=treedepth(H))
+        self.combiner = combiner_class(len(H), coloring, table_hints, td=td_lower)
         # TODO: calculate a lower bound on treedepth
         self.decomp_generator = decomp_class(G, coloring, len(H),
                                              self.combiner.tree_depth,

@@ -64,6 +64,12 @@ run_nx_test() {
 color_graph() {
 	log_bold "Creating graph coloring..."
 	size=$(${path}/graph_size.py $2)
+
+	re='^[0-9]+$'
+	if ! [[ $size =~ $re ]] ; then
+   		${path}/graph_size.py $2; exit 1
+	fi
+
 	filename=$(basename "$1")
 	coloring_file="${path}/colorings/${filename%.*}${size}"
 	if [ "$#" -lt 3 ]; then

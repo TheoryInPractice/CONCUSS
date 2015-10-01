@@ -18,6 +18,8 @@ from lib.pattern_counting.pattern_counter import PatternCounter
 import cProfile
 import pstats
 from lib.graph.graph import Coloring
+import lib.graph.pattern_generator as pattern_gen
+from lib.graph.treedepth import treedepth
 
 def import_modules(name):
     """
@@ -78,6 +80,88 @@ def p_centered_coloring(graph, td, cfgfile, verbose):
     return col
 
 
+def pattern_argument_error_msg():
+    print "\nThe argument provided for 'pattern' is invalid.\n"
+    print "Please use format:\n\n" \
+          "\033[1mfilename.txt \033[0m\n" \
+          "For example: ./path_to_file/K3.txt" \
+          "\n\nor\n\n" \
+          "Basic patterns:\n\n" \
+          "Usage: \033[1mpattern_nameint\033[0m\n" \
+          "For example: clique3\n" \
+          "\nor for bipartite patterns:\n" \
+          "Usage: \033[1mpattern_nameint,int\033[0m\n" \
+          "For example: biclique3,4\n" \
+          "\nSupported basic patterns:\n"
+    print "\n".join(pattern_gen.supported_patterns)
+    print
+    sys.exit(1)
+
+def parse_pattern_argument(pattern):
+    """
+    Parses the 'pattern' command line argument.
+    Checks to see if this argument is a filename or
+    a description of the pattern
+
+    :param pattern: Filename or description of pattern
+    :return: A tuple with the pattern graph and a lower
+             bound on its treedepth
+    """
+    import os
+
+    # Get the name of the file and the file extension
+    name, ext = os.path.splitext(pattern)
+    # There is no extension, so argument is a description
+    # of the pattern
+    if ext == "":
+        import re
+        p = re.compile(r'(\d*)')
+        # Parse out the different parts of the argument
+        args = filter(lambda x: x != "" and x != ",", p.split(pattern))
+        # There are two parts
+        if len(args) == 2 and args[0] not in pattern_gen.bipartite_patterns:
+            try:
+                # Get the generator for the pattern type
+                generator = pattern_gen.get_generator(args[0])
+                # Get the number of vertices provided
+                pattern_num_vertices = int(args[1])
+                # Generate the pattern
+                H = generator(pattern_num_vertices)
+                # Return the pattern along with its treedepth
+                return H, treedepth(H, args[0], pattern_num_vertices)
+            except KeyError:
+                pattern_argument_error_msg()
+
+        # Bipartite pattern type provided
+        elif len(args) == 3 and args[0] in pattern_gen.bipartite_patterns:
+            # Make sure it is a valid bipartite pattern
+            try:
+                generator = pattern_gen.get_generator(args[0])
+                # Try to get the two set sizes
+                m = int(args[1])
+                n = int(args[2])
+                # Generate the pattern
+                H = generator(m, n)
+                # Return the pattern along with its treedepth
+                return H, treedepth(H, args[0], m, n)
+            except (KeyError, ValueError):
+                # Invalid sizes provided
+                pattern_argument_error_msg()
+        else:
+            # Number of vertices not provided in argument
+            pattern_argument_error_msg()
+    else:
+        # Argument is a filename
+        try:
+            # Try to load the graph from file
+            H = load_graph(pattern)
+            # Return pattern along with lower bound on its treedepth
+            return H, treedepth(H)
+        except Exception:
+            # Invalid file extension
+            pattern_argument_error_msg()
+
+
 def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
                 verbose, profile):
     """Basic running of the pipeline"""
@@ -86,9 +170,10 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         readProfile = cProfile.Profile()
         readProfile.enable()
 
+    H, td_lower = parse_pattern_argument(pattern)
+
     # Read graphs from file
     G = load_graph(graph)
-    H = load_graph(pattern)
     td = len(H)
 
     G_path, G_local_name = os.path.split(graph)
@@ -134,7 +219,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
     sweep_class = import_modules('lib.decomposition.' + sweep_name)
 
     # Count patterns
-    pattern_counter = PatternCounter(G, H, coloring,
+    pattern_counter = PatternCounter(G, H, td_lower, coloring,
                                      pattern_class=patternClass,
                                      table_hints=table_hints,
                                      decomp_class=sweep_class,
