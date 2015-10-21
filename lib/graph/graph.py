@@ -326,7 +326,7 @@ class Graph(object):
         :param u: The vertex whose neighbors are to be returned
         :return: A frozenset of containing neighbors of the vertex
         """
-        return frozenset(self.adj[u])
+        return self.adj[u]
 
     def neighbours_set(self, centers):
         """
