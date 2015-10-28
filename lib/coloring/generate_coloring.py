@@ -90,7 +90,7 @@ def ccalgorithm_factory(cfgfile, silent):
 class CCAlgorithm(object):
 
     def __init__(self, preprocess=None, ldo=None, step=None, col=None,
-                 ctd=None, opt=None, silent=False, profile=True):
+                 ctd=None, opt=None, silent=False, profile=False):
         self.preprocess = preprocess
         self.ldo = ldo
         self.step = step
