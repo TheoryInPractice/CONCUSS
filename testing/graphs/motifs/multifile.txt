@@ -1,0 +1,3 @@
+star3
+path3
+testing/graphs/motifs/K3.txt

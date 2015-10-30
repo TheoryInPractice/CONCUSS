@@ -37,18 +37,18 @@ class MemoizedBVKPattern(BVKPattern):
     forgetLookup = {}
     boundaryIterLookup = {}
 
-    def inverseJoin(self):
+    def inverseJoin(self, pat):
         """Return all pattern pairs whose joins give this pattern"""
         bd = self.boundary
         v = self.vertices
-        if (bd, v) not in self.__class__.joinLookup:
+        if (bd, v, pat) not in self.__class__.joinLookup:
             nonBoundaryVertices = self.vertices - self.boundaryVertices
             # Localize lookups for extra speed
             separatorLookup = self.__class__.separatorLookup
             bv = self.boundaryVertices
             g = self.graph
-            self.__class__.joinLookup[(bd, v)] = []
-            lu = self.__class__.joinLookup[(bd, v)]
+            self.__class__.joinLookup[(bd, v, pat)] = []
+            lu = self.__class__.joinLookup[(bd, v, pat)]
             for v_set in range(2 ** self.k):
                 # ensure the vertex set is a subset of the vertex set
                 if v_set & v == v_set:
@@ -58,9 +58,9 @@ class MemoizedBVKPattern(BVKPattern):
                         lu.append((pattern2, pattern3))
                     except KeyError:
                         pass
-        return self.__class__.joinLookup[(bd, v)]
+        return self.__class__.joinLookup[(bd, v, pat)]
 
-    def inverseForget(self, i):
+    def inverseForget(self, i, pat):
         """
         Return all patterns that give this pattern when it forgets index i
 
@@ -69,7 +69,7 @@ class MemoizedBVKPattern(BVKPattern):
         """
         v = self.vertices
         bd = self.boundary
-        if (v, bd, i) not in self.__class__.forgetLookup:
+        if (v, bd, i, pat) not in self.__class__.forgetLookup:
             if self.boundaryIndexLookup(i) is None:
                 # Localize lookups for extra speed
                 nm = self.nullMask
@@ -78,8 +78,8 @@ class MemoizedBVKPattern(BVKPattern):
                 v = self.vertices
                 g = self.graph
                 bd = self.boundary
-                self.__class__.forgetLookup[(v, bd, i)] = []
-                lu = self.__class__.forgetLookup[(v, bd, i)]
+                self.__class__.forgetLookup[(v, bd, i, pat)] = []
+                lu = self.__class__.forgetLookup[(v, bd, i, pat)]
                 lu.append(self)
 
                 nonBoundaryVertices = v - self.boundaryVertices
@@ -97,7 +97,7 @@ class MemoizedBVKPattern(BVKPattern):
                             pass
             else:
                 return ()
-        return self.__class__.forgetLookup[(v, bd, i)]
+        return self.__class__.forgetLookup[(v, bd, i, pat)]
 
     def join(self, pattern2):
         """
@@ -149,19 +149,19 @@ class MemoizedBVKPattern(BVKPattern):
         except KeyError:
             raise ValueError("Pattern boundary is not a separator")
 
-    def boundaryIter(self):
+    def boundaryIter(self, pat):
         """Returns an iterator to the boundary items"""
         vt = self.vertices
         bd = self.boundary
-        if (bd, vt) not in self.__class__.boundaryIterLookup:
-            self.__class__.boundaryIterLookup[(bd, vt)] = []
-            lookup = self.__class__.boundaryIterLookup[(bd, vt)]
+        if (bd, vt, pat) not in self.__class__.boundaryIterLookup:
+            self.__class__.boundaryIterLookup[(bd, vt, pat)] = []
+            lookup = self.__class__.boundaryIterLookup[(bd, vt, pat)]
             for i in range(self.k):
                 entry = (bd >> i*self.idBitLength) & self.nullMask
                 if entry != self.nullMask:
                     v = self.intMapping[entry]
                     lookup.append((v, i))
-        return iter(self.__class__.boundaryIterLookup[(bd, vt)])
+        return iter(self.__class__.boundaryIterLookup[(bd, vt, pat)])
 
     @classmethod
     def allPatterns(cls, graph, k):
@@ -169,6 +169,11 @@ class MemoizedBVKPattern(BVKPattern):
         Return all k-patterns from a given vertex set
         """
         # print [(i, len(j)) for i, j in cls.allPatternLookup.iteritems()]
+
+        #print "Graph hash:", graph, k, (graph, k).__hash__()
+
+        #print "Calling with graph:", graph, k, (graph, k) in cls.allPatternLookup
+
         if (graph, k) in cls.allPatternLookup:
             patterns = cls.allPatternLookup[(graph, k)]
         else:

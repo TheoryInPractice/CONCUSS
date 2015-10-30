@@ -19,6 +19,7 @@ import cProfile
 import pstats
 from lib.graph.graph import Coloring
 import lib.graph.pattern_generator as pattern_gen
+from lib.graph.pattern_generator import clique, path, star
 from lib.graph.treedepth import treedepth
 
 def import_modules(name):
@@ -80,8 +81,8 @@ def p_centered_coloring(graph, td, cfgfile, verbose):
     return col
 
 
-def pattern_argument_error_msg():
-    print "\nThe argument provided for 'pattern' is invalid.\n"
+def pattern_argument_error_msg(pat_arg):
+    print "\nThe argument '" + pat_arg + "' provided for 'pattern' is invalid.\n"
     print "Please use format:\n\n" \
           "\033[1mfilename.txt \033[0m\n" \
           "For example: ./path_to_file/K3.txt" \
@@ -107,6 +108,7 @@ def parse_pattern_argument(pattern):
     :return: A tuple with the pattern graph and a lower
              bound on its treedepth
     """
+
     import os
 
     # Get the name of the file and the file extension
@@ -130,7 +132,7 @@ def parse_pattern_argument(pattern):
                 # Return the pattern along with its treedepth
                 return H, treedepth(H, args[0], pattern_num_vertices)
             except KeyError:
-                pattern_argument_error_msg()
+                pattern_argument_error_msg(pattern)
 
         # Bipartite pattern type provided
         elif len(args) == 3 and args[0] in pattern_gen.bipartite_patterns:
@@ -146,10 +148,10 @@ def parse_pattern_argument(pattern):
                 return H, treedepth(H, args[0], m, n)
             except (KeyError, ValueError):
                 # Invalid sizes provided
-                pattern_argument_error_msg()
+                pattern_argument_error_msg(pattern)
         else:
             # Number of vertices not provided in argument
-            pattern_argument_error_msg()
+            pattern_argument_error_msg(pattern)
     else:
         # Argument is a filename
         try:
@@ -159,22 +161,56 @@ def parse_pattern_argument(pattern):
             return H, treedepth(H)
         except Exception:
             # Invalid file extension
-            pattern_argument_error_msg()
+            pattern_argument_error_msg(pattern)
+
+
+def parse_multifile(multifile):
+    if multifile:
+        try:
+            m_file = multifile[0]
+            if m_file:
+                pattern_reader = open(m_file, 'r')
+                patterns = [line[:-1] for line in pattern_reader]
+                multi=[]
+                td_lower=sys.maxint
+                for pat in patterns:
+                    graph, td = parse_pattern_argument(pat)
+                    multi.append(graph)
+                    td_lower = min(td, td_lower)
+                return multi, td_lower
+            else:
+                print "\nPlease provide a valid multi-pattern file while using argument 'multi'\n"
+                sys.exit(1)
+        except IOError:
+            print "\nPlease provide a valid multi-pattern file while using argument 'multi'\n"
+            sys.exit(1)
+    else:
+        print "\nPlease provide a valid multi-pattern file while using argument 'multi'\n"
+        sys.exit(1)
 
 
 def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
-                verbose, profile):
+                verbose, profile, multifile):
     """Basic running of the pipeline"""
 
     if profile:  # time profiling
         readProfile = cProfile.Profile()
         readProfile.enable()
 
-    H, td_lower = parse_pattern_argument(pattern)
+    if pattern == 'multi':
+        multi, td_lower = parse_multifile(multifile)
+    else:
+        pat, td_lower = parse_pattern_argument(pattern)
+        multi = list(pat)
 
     # Read graphs from file
     G = load_graph(graph)
-    td = len(H)
+    #td = len(H)
+
+    #multi = [path(3), star(3), clique(3)]
+
+    td = len(max(multi, key=len))
+    #td_lower = 2
 
     G_path, G_local_name = os.path.split(graph)
     G_name, G_extension = os.path.splitext(G_local_name)
@@ -219,14 +255,24 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
     sweep_class = import_modules('lib.decomposition.' + sweep_name)
 
     # Count patterns
-    pattern_counter = PatternCounter(G, H, td_lower, coloring,
+    # pattern_counter = PatternCounter(G, H, td_lower, coloring,
+    #                                  pattern_class=patternClass,
+    #                                  table_hints=table_hints,
+    #                                  decomp_class=sweep_class,
+    #                                  combiner_class=count_class,
+    #                                  verbose=verbose)
+
+    pattern_counter = PatternCounter(G, multi, td_lower, coloring,
                                      pattern_class=patternClass,
                                      table_hints=table_hints,
                                      decomp_class=sweep_class,
                                      combiner_class=count_class,
                                      verbose=verbose)
+
     patternCount = pattern_counter.count_patterns()
-    print "Number of occurrences of H in G: {0}".format(patternCount)
+    pattern_names = [pat[:-1] for pat in open(multifile[0], 'r')]
+    for i in range(len(pattern_names)):
+        print "Number of occurrences of {0} in G: {1}".format(pattern_names[i], patternCount[i])
 
     if profile:  # time profiling
         patternProfile.disable()

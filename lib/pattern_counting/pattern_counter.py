@@ -22,7 +22,7 @@ class PatternCounter(object):
     the final count from the whole graph.
     """
 
-    def __init__(self, G, H, td_lower, coloring, pattern_class=KPattern, table_hints={},
+    def __init__(self, G, multi, td_lower, coloring, pattern_class=KPattern, table_hints={},
                  decomp_class=CombinationsSweep,
                  combiner_class=InclusionExclusion, verbose=False):
         """
@@ -39,20 +39,19 @@ class PatternCounter(object):
             verbose: whether or not to print debugging information
         """
         self.G = G
-        self.H = H
+        self.multi = multi
         self.coloring = coloring
         self.pattern_class = pattern_class
         self.verbose = verbose
-
-        self.combiner = combiner_class(len(H), coloring, table_hints, td=td_lower)
+        self.combiner = combiner_class(len(max(multi, key=len)), coloring, table_hints, td=td_lower)
         # TODO: calculate a lower bound on treedepth
-        self.decomp_generator = decomp_class(G, coloring, len(H),
+        self.decomp_generator = decomp_class(G, coloring, len(max(multi, key=len)),
                                              self.combiner.tree_depth,
                                              [self.combiner.before_color_set],
                                              [self.combiner.after_color_set],
                                              self.verbose)
 
-    def count_patterns_from_TDD(self, decomp):
+    def count_patterns_from_TDD(self, decomp, pat):
         """
         Count the number of occurrences of our pattern in the given treedepth
         decomposition.
@@ -85,46 +84,60 @@ class PatternCounter(object):
         for v in ordering:
             # If the vertex is a leaf
             if decomp.hasLeaf(v):
-                for pattern in pattern_class.allPatterns(self.H,
+                for pattern in pattern_class.allPatterns(pat,
                                                          decomp.depth()):
                     # print "  Pattern:  ", pattern
-                    computeLeaf(v, pattern)
+                    computeLeaf(v, pattern, pat)
             # If the vertex is internal:
             else:
                 # Get counts for tuples of its children (join case)
                 for c_idx in range(2, len(decomp.children(v))+1):
                     leftChildren = tuple(decomp.children(v)[:c_idx])
-                    for pattern in pattern_class.allPatterns(self.H,
+                    for pattern in pattern_class.allPatterns(pat,
                                                              decomp.depth()):
                         # print "  Pattern:  ", pattern
-                        computeInnerVertexSet(leftChildren, pattern)
+                        computeInnerVertexSet(leftChildren, pattern, pat)
                     # Possibly clean up some unneeded data structures
                     computeInnerVertexSetCleanup(leftChildren)
                 # Combine child counts (forget case)
-                for pattern in pattern_class.allPatterns(self.H,
+                for pattern in pattern_class.allPatterns(pat,
                                                          decomp.depth()):
-                    computeInnerVertex(v, pattern)
+                    computeInnerVertex(v, pattern, pat)
 
         # leaf = G.leaves().pop()
         # for pattern in patternClass.allPatterns(H, G.depth()):
         #     print G.isIsomorphism(leaf, pattern), pattern
 
         # Get the total count for the whole TDD
-        trivialPattern = pattern_class(self.H.nodes, None, self.H)
+        trivialPattern = pattern_class(pat.nodes, None, pat)
 
         retVal = table.lookup((decomp.root,), trivialPattern)
-        # if retVal > 0:
-        #     print "Return value", retVal
-        #     print table
+
+        # print "Return value", retVal
+        # print table
+
         return retVal
 
     def count_patterns(self):
         """Count the number of occurrences of our pattern in our host graph."""
+
+        final_count = [0]*len(self.multi)
         # For every TDD given to us by the decomposition generator
+        #tdd_store = [tdd for tdd in self.decomp_generator]
+
+        # for idx, pat in enumerate(self.multi):
+        #     print idx, str(pat)
+        #     print idx, [e for e in pat.edges()]
+        #
+        # import sys
+        # sys.exit(1)
+
+
         for tdd in self.decomp_generator:
             # Count patterns in that TDD
-            count = self.count_patterns_from_TDD(tdd)
-            # Combine the count from the TDD
-            self.combiner.combine_count(count)
+            for idx, pat in enumerate(self.multi):
+                count = self.count_patterns_from_TDD(tdd, pat)
+                # Combine the count from the TDD
+                final_count[idx] += self.combiner.combine_count(count)
         # Return the total for the whole graph
-        return self.combiner.get_count()
+        return final_count
