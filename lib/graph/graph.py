@@ -326,7 +326,7 @@ class Graph(object):
         :param u: The vertex whose neighbors are to be returned
         :return: A frozenset of containing neighbors of the vertex
         """
-        return frozenset(self.adj[u])
+        return self.adj[u]
 
     def neighbours_set(self, centers):
         """
@@ -452,7 +452,7 @@ class Graph(object):
 
         for v in selected:
             # It is assumed that all vertices in selected in self.nodes.
-            # Verticies not in self.nodes are added as isolates, as they
+            # Vertices not in self.nodes are added as isolates, as they
             # aren't connected to any other vertices
             res.add_node(v)
 
