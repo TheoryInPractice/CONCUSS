@@ -201,7 +201,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         multi, td_lower = parse_multifile(multifile)
     else:
         pat, td_lower = parse_pattern_argument(pattern)
-        multi = list(pat)
+        multi = [pat]
 
     # Read graphs from file
     G = load_graph(graph)
