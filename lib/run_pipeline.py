@@ -270,7 +270,10 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
                                      verbose=verbose)
 
     patternCount = pattern_counter.count_patterns()
-    pattern_names = [pat[:-1] for pat in open(multifile[0], 'r')]
+    if pattern == "multi":
+        pattern_names = [pat[:-1] for pat in open(multifile[0], 'r')]
+    else:
+        pattern_names = [pattern]
     for i in range(len(pattern_names)):
         print "Number of occurrences of {0} in G: {1}".format(pattern_names[i], patternCount[i])
 
