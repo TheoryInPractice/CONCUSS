@@ -1,4 +1,4 @@
-#CONCUSS: Combatting Network Complexity Using Structural Sparsity
+#CONCUSS: Combatting Network Complexity Using Structural Sparsity [![logo](concuss_logo.png)]
 
 CONCUSS is a software tool for large scale graph analytics.  The efficiency and scalability of CONCUSS come from exploiting the underlying [structure and sparsity](/docs/background.md) of the data.  It allows users to count the number of occurences of a specific pattern within a graph (i.e. subgraph isomorphism counting).  These counts are a building block for more complicated scientific analysis, such as motif counting and graphlet degree signature creation.  
 
