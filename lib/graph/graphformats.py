@@ -190,8 +190,9 @@ def write_leda(graph, ostream, **kwargs):
     m = sum(1 for _, _ in graph.edges())
 
     ostream.write(str(n)+'\n')
-    indices = {}
+    indices = []
     for i, v in enumerate(graph):
+        indices.extend([0 for x in range(len(indices), v + 1)])
         indices[v] = i
         ostream.write('|{}|\n')
 
@@ -205,8 +206,9 @@ def write_dgf(graph, ostream):
     m = sum(1 for _, _ in graph.edges())
 
     ostream.write('p edge ' + str(n) + ' ' + str(m) + '\n')
-    indices = {}
+    indices = []
     for i, v in enumerate(graph):
+        indices.extend([0 for x in range(len(indices), v + 1)])
         indices[v] = i
 
     for s, t in graph.edges():

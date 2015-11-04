@@ -10,7 +10,6 @@ import os
 from lib.graph.graph import Graph, Coloring
 from lib.util.recordtype import *
 import itertools
-from collections import defaultdict
 
 # Define a record type of information about the vertices
 # Attributes:
@@ -36,7 +35,7 @@ class TDDecomposition(Graph):
     def __init__(self):
         super(TDDecomposition, self).__init__()
         self.maxDepth = 0
-        self.vertexRecords = {}
+        self.vertexRecords = []
         self.root = None
         self.coloring = None
 
@@ -56,7 +55,11 @@ class TDDecomposition(Graph):
         for v in selected:
             # Add edges from this vertex to each of the ones
             # adjacent to it
-            result.adj[v] |= graph.neighbours(v) & selected
+            if v < len(result.adj):
+                result.adj[v] |= graph.neighbours(v) & selected
+            else:
+                result.adj.extend([set() for x in range(len(result.adj), v + 1)])
+                result.adj[v] |= graph.neighbours(v) & selected
         result.coloring = coloring
         return result
 
@@ -99,6 +102,7 @@ class TDDecomposition(Graph):
 
     def add_node(self, u):
         Graph.add_node(self, u)
+        self.vertexRecords.extend([None for x in range(len(vertexRecords), u + 1)])
         self.vertexRecords[u] = VertexInfo(parent=None, children=[],
                                            depth=None)
 
@@ -108,6 +112,7 @@ class TDDecomposition(Graph):
         # Make a local reference to self.vertexRecords for use in the loop
         vertexRecords = self.vertexRecords
         for n in u:
+            self.vertexRecords.extend([None for x in range(len(vertexRecords), n + 1)])
             vertexRecords[n] = VertexInfo(parent=None, children=[], depth=None)
 
     def depth(self, v=None):
