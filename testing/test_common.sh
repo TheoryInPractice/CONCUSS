@@ -7,6 +7,7 @@
 # test_common.sh - Common functions for test scripts
 
 args="$@"
+newargs=("$@")
 path=$(dirname $(which $0))
 export PYTHONPATH=$PYTHONPATH:${path}/..
 
