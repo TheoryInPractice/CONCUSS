@@ -46,7 +46,7 @@ def trim_low_and_high_degree(g):
             coloring[v] = 0
 
         one_color = len(coloring)
-        print "one_color", one_color
+        #print "one_color", one_color
 
         for v in one_degree:
             coloring[v] = one_color

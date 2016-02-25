@@ -8,11 +8,12 @@
 
 import sys
 import os
-import argparse
-#import ConfigParser
+import shutil
+
+from zipfile import ZipFile
 from lib.util.parse_config_safe import parse_config_safe
 from lib.coloring.generate_coloring import ccalgorithm_factory, \
-     import_colmodules, save_file
+    import_colmodules, save_file
 from lib.graph.graphformats import load_graph as load_graph
 from lib.pattern_counting.pattern_counter import PatternCounter
 import cProfile
@@ -20,6 +21,7 @@ import pstats
 from lib.graph.graph import Coloring
 import lib.graph.pattern_generator as pattern_gen
 from lib.graph.treedepth import treedepth
+
 
 def import_modules(name):
     """
@@ -97,6 +99,7 @@ def pattern_argument_error_msg():
     print
     sys.exit(1)
 
+
 def parse_pattern_argument(pattern):
     """
     Parses the 'pattern' command line argument.
@@ -163,8 +166,17 @@ def parse_pattern_argument(pattern):
 
 
 def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
-                verbose, profile):
+                verbose, profile, execution_data):
     """Basic running of the pipeline"""
+
+    # If execution_data flag is set
+    if execution_data:
+        # Check if directory exists already
+        if os.path.isdir("./execdata"):
+            # delete it, if it does exist
+            shutil.rmtree("./execdata")
+        # make new directory called "execdata"
+        os.mkdir("./execdata")
 
     if profile:  # time profiling
         readProfile = cProfile.Profile()
@@ -213,9 +225,9 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
     count_name = cfgParser.get('combine', 'count')
     sweep_name = cfgParser.get('decompose', 'sweep')
 
-    patternClass = import_modules("lib.pattern_counting.dp."+kpat_name)
+    patternClass = import_modules("lib.pattern_counting.dp." + kpat_name)
     count_class = import_modules('lib.pattern_counting.double_count.' +
-                                       count_name)
+                                 count_name)
     sweep_class = import_modules('lib.decomposition.' + sweep_name)
 
     # Count patterns
@@ -228,9 +240,55 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
     patternCount = pattern_counter.count_patterns()
     print "Number of occurrences of H in G: {0}".format(patternCount)
 
+    if execution_data:
+        # if execution data flag is set
+        # make and write to visinfo.cfg
+        with open('execdata/visinfo.cfg', 'w') as visinfo:
+            write_visinfo(visinfo, graph, pattern)
+
+        # write execution data to zip
+        with ZipFile(execution_data, 'w') as exec_zip:
+            exec_zip.write("execdata/visinfo.cfg", "visinfo.cfg")
+            exec_zip.write(cfgFile, os.path.split(cfgFile)[1])
+            exec_zip.write(graph, os.path.split(graph)[1])
+            exec_zip.write(pattern, os.path.split(pattern)[1])
+
+        # delete execution data stored in folder
+        shutil.rmtree('./execdata')
+
     if profile:  # time profiling
         patternProfile.disable()
         printProfileStats("pattern counting", patternProfile)
+
+
+def write_visinfo(visfile, graph, pattern):
+    """
+    Write to the visinfo.cfg file
+
+    :param visfile: Name of the config file
+    :param graph: The name of the graph used
+    :param pattern: The name of the pattern used
+
+    """
+    # Write header
+    visfile.write(
+        "# Configuration file for selecting modules to be used in each stage of the pattern counting pipeline.\n"
+        "# More details are available in docs/config_options.md\n"
+        "\n")
+
+    # pipeline info
+    visfile.write("# name: name of the pipeline this zip archive came from\n"
+                  "# command: command that was used to run the pipeline")
+    visfile.write("\n[pipeline]\n")
+    visfile.write("name: concuss\n")
+    visfile.write("command: \n")
+
+    # graph and motif info
+    visfile.write("# graph: name identifier of graph.txt\n" +
+                  "# motif: name identifier of motif.txt\n")
+    visfile.write("\n[graphs]\n")
+    visfile.write("graph: " + os.path.split(graph)[1] + "\n")
+    visfile.write("motif: " + os.path.split(pattern)[1] + "\n")
 
 
 def printProfileStats(name, profile, percent=1.0):

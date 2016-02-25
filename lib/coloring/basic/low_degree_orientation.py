@@ -18,7 +18,7 @@ def low_degree_orientation(g, weight=None):
     res = TFGraph(g.nodes)
 
     if weight is None:
-        weight = defaultdict( int )
+        weight = defaultdict(int)
 
     deglist = []
     buckets = []
@@ -30,7 +30,7 @@ def low_degree_orientation(g, weight=None):
             deglist[v] = d
         else:
             deglist.extend([0 for x in range(len(deglist), v)])
-            deglist.insert( v, d )
+            deglist.insert(v, d)
 
         # Flexible  buckets[d].add(v)
         if d < len(buckets):

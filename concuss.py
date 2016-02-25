@@ -39,6 +39,9 @@ def main():
     parser.add_argument("-C", "--coloring-no-verify",
                         help="do not verify correctness of existing coloring",
                         action="store_true")
+    parser.add_argument("-e", "--execution-data",
+                        help="name of zip to output CONCUSS execution data to",
+                        type=str)
 
     # Parse the arguments provided by the user to pass them to the
     # runPipeline method
@@ -47,7 +50,7 @@ def main():
     # Run the pipeline
     runPipeline(args.graph, args.pattern, args.config, args.coloring,
                 args.coloring_no_verify, args.output, args.verbose,
-                args.profile)
+                args.profile, args.execution_data)
 
 if __name__ == "__main__":
     main()
