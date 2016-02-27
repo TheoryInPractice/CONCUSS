@@ -9,15 +9,16 @@
 import sys
 import os
 import shutil
-
 from zipfile import ZipFile
-from lib.util.parse_config_safe import parse_config_safe
-from lib.coloring.generate_coloring import ccalgorithm_factory, \
-    import_colmodules, save_file
-from lib.graph.graphformats import load_graph as load_graph
-from lib.pattern_counting.pattern_counter import PatternCounter
 import cProfile
 import pstats
+import ConfigParser
+
+from lib.util.parse_config_safe import parse_config_safe
+from lib.coloring.generate_coloring import (ccalgorithm_factory,
+    import_colmodules, save_file)
+from lib.graph.graphformats import load_graph as load_graph
+from lib.pattern_counting.pattern_counter import PatternCounter
 from lib.graph.graph import Coloring
 import lib.graph.pattern_generator as pattern_gen
 from lib.graph.treedepth import treedepth
@@ -110,8 +111,6 @@ def parse_pattern_argument(pattern):
     :return: A tuple with the pattern graph and a lower
              bound on its treedepth
     """
-    import os
-
     # Get the name of the file and the file extension
     name, ext = os.path.splitext(pattern)
     # There is no extension, so argument is a description
@@ -265,31 +264,26 @@ def write_visinfo(visfile, graph, pattern):
     """
     Write to the visinfo.cfg file
 
-    :param visfile: Name of the config file
+    :param visfile: File handle to the config file
     :param graph: The name of the graph used
     :param pattern: The name of the pattern used
 
     """
-    # Write header
-    visfile.write(
-        "# Configuration file for selecting modules to be used in each stage of the pattern counting pipeline.\n"
-        "# More details are available in docs/config_options.md\n"
-        "\n")
+    # Create configuration object
+    config = ConfigParser.SafeConfigParser()
 
-    # pipeline info
-    visfile.write("# name: name of the pipeline this zip archive came from\n"
-                  "# command: command that was used to run the pipeline")
-    visfile.write("\n[pipeline]\n")
-    visfile.write("name: concuss\n")
-    visfile.write("command: \n")
+    # Pipeline info
+    config.add_section('pipeline')
+    config.set('pipeline', 'name', 'concuss')
+    config.set('pipeline', 'command', ' '.join(sys.argv))
 
-    # graph and motif info
-    visfile.write("# graph: name identifier of graph.txt\n" +
-                  "# motif: name identifier of motif.txt\n")
-    visfile.write("\n[graphs]\n")
-    visfile.write("graph: " + os.path.split(graph)[1] + "\n")
-    visfile.write("motif: " + os.path.split(pattern)[1] + "\n")
+    # Graph and motif info
+    config.add_section('graphs')
+    config.set('graphs', 'graph', os.path.split(graph)[1])
+    config.set('graphs', 'motif', os.path.split(pattern)[1])
 
+    # Write configuration to the visinfo file
+    config.write(visfile)
 
 def printProfileStats(name, profile, percent=1.0):
     """
