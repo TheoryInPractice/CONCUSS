@@ -76,9 +76,9 @@ def coloring_from_file(filename, graph, td, cfgfile, verbose, verify=False):
     return coloring
 
 
-def p_centered_coloring(graph, td, cfgfile, verbose):
+def p_centered_coloring(graph, td, cfgfile, verbose, execdata):
     """Start running the p-centered coloring"""
-    m = ccalgorithm_factory(cfgfile, not verbose)
+    m = ccalgorithm_factory(cfgfile, not verbose, execdata)
     col = m.start(graph, td)
     return col
 
@@ -129,6 +129,7 @@ def parse_pattern_argument(pattern):
                 pattern_num_vertices = int(args[1])
                 # Generate the pattern
                 H = generator(pattern_num_vertices)
+
                 # Return the pattern along with its treedepth
                 return H, treedepth(H, args[0], pattern_num_vertices)
             except KeyError:
@@ -169,7 +170,8 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
     """Basic running of the pipeline"""
 
     # If execution_data flag is set
-    if execution_data:
+    execdata = execution_data is not None
+    if execdata:
         # Check if directory exists already
         if os.path.isdir("./execdata"):
             # delete it, if it does exist
@@ -201,7 +203,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
 
     # Find p-centered coloring
     if colorFile is None:
-        coloring = p_centered_coloring(G, td, cfgFile, verbose)
+        coloring = p_centered_coloring(G, td, cfgFile, verbose, execdata)
         save_file(coloring, 'colorings/' + G_name + str(td), False, verbose)
     else:
         coloring = coloring_from_file(colorFile, G, td, cfgFile, verbose,
@@ -239,7 +241,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
     patternCount = pattern_counter.count_patterns()
     print "Number of occurrences of H in G: {0}".format(patternCount)
 
-    if execution_data:
+    if execdata:
         # if execution data flag is set
         # make and write to visinfo.cfg
         with open('execdata/visinfo.cfg', 'w') as visinfo:
@@ -247,7 +249,15 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
 
         # write execution data to zip
         with ZipFile(execution_data, 'w') as exec_zip:
-            exec_zip.write("execdata/visinfo.cfg", "visinfo.cfg")
+            # exec_zip.write("execdata/visinfo.cfg", "visinfo.cfg")
+
+            # Write coloring data:
+            rootDir = './execdata/'
+            for dir_name, _, file_list in os.walk(rootDir):
+                for f_name in file_list:
+                    full_path = dir_name + '/' + f_name
+                    exec_zip.write(full_path, '/'.join(full_path.split('/')[2:]))
+
             exec_zip.write(cfgFile, os.path.split(cfgFile)[1])
             exec_zip.write(graph, os.path.split(graph)[1])
             exec_zip.write(pattern, os.path.split(pattern)[1])
