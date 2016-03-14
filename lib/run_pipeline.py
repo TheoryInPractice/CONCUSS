@@ -101,6 +101,62 @@ def pattern_argument_error_msg():
     sys.exit(1)
 
 
+def is_basic_pattern(pattern):
+    name, ext = os.path.splitext(pattern)
+    return ext == ""
+
+
+def get_pattern_from_file(filename):
+    # Argument is a filename
+        try:
+            # Try to load the graph from file
+            H = load_graph(filename)
+            # Return pattern along with lower bound on its treedepth
+            return H, treedepth(H)
+        except Exception:
+            # Invalid file extension
+            pattern_argument_error_msg()
+
+
+def get_pattern_from_generator(pattern):
+    import re
+    p = re.compile(r'(\d*)')
+    # Parse out the different parts of the argument
+    args = filter(lambda x: x != "" and x != ",", p.split(pattern))
+    # There are two parts
+    if len(args) == 2 and args[0] not in pattern_gen.bipartite_patterns:
+        try:
+            # Get the generator for the pattern type
+            generator = pattern_gen.get_generator(args[0])
+            # Get the number of vertices provided
+            pattern_num_vertices = int(args[1])
+            # Generate the pattern
+            H = generator(pattern_num_vertices)
+
+            # Return the pattern along with its treedepth
+            return H, treedepth(H, args[0], pattern_num_vertices)
+        except KeyError:
+            pattern_argument_error_msg()
+
+    # Bipartite pattern type provided
+    elif len(args) == 3 and args[0] in pattern_gen.bipartite_patterns:
+        # Make sure it is a valid bipartite pattern
+        try:
+            generator = pattern_gen.get_generator(args[0])
+            # Try to get the two set sizes
+            m = int(args[1])
+            n = int(args[2])
+            # Generate the pattern
+            H = generator(m, n)
+            # Return the pattern along with its treedepth
+            return H, treedepth(H, args[0], m, n)
+        except (KeyError, ValueError):
+            # Invalid sizes provided
+            pattern_argument_error_msg()
+    else:
+        # Number of vertices not provided in argument
+        pattern_argument_error_msg()
+
 def parse_pattern_argument(pattern):
     """
     Parses the 'pattern' command line argument.
@@ -183,7 +239,12 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         readProfile = cProfile.Profile()
         readProfile.enable()
 
-    H, td_lower = parse_pattern_argument(pattern)
+    basic_pattern = is_basic_pattern(pattern)
+
+    if basic_pattern:
+        H, td_lower = get_pattern_from_generator(pattern)
+    else:
+        H, td_lower = get_pattern_from_file(pattern)
 
     # Read graphs from file
     G = load_graph(graph)
@@ -260,7 +321,19 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
 
             exec_zip.write(cfgFile, os.path.split(cfgFile)[1])
             exec_zip.write(graph, os.path.split(graph)[1])
-            exec_zip.write(pattern, os.path.split(pattern)[1])
+
+            # Check to see if the user specified a basic pattern
+            if basic_pattern:
+                from lib.graph.graphformats import write_edgelist
+                # Write the pattern graph object to a file as an edgelist
+                with open(pattern + '.txt', 'w') as pattern_file:
+                    write_edgelist(H, pattern_file)
+                # Write the file to the zip
+                exec_zip.write(pattern + '.txt', os.path.split(pattern + '.txt')[1])
+                # File written to zip, delete it
+                os.remove(pattern + '.txt')
+            else:
+                exec_zip.write(pattern, os.path.split(pattern)[1])
 
         # delete execution data stored in folder
         shutil.rmtree('./execdata')
