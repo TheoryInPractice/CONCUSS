@@ -134,6 +134,7 @@ class CCAlgorithm(object):
 
         g = self.ldo(orig)
         col = self.col(orig, g, trans, frat, col)
+        # print col.color
 
         # User wants to output execution data
         if self.execdata:
@@ -149,13 +150,15 @@ class CCAlgorithm(object):
                 for vertex, clr in col.color.iteritems():
                     coloring_zero.write(str(mapping[vertex]) + ": " + str(clr) + '\n')
                 # Write colors for vertices not in preprocessed graph
+                next_color = len(col)
                 for vertex in removed_vertices:
                         # If degree is 0, assign color 0
                         if rawgraph.degree(vertex) == 0:
                             coloring_zero.write(str(vertex) + ": " + '0' + '\n')
                         # Degree not zero, hence assign color equal to length of coloring
                         else:
-                            coloring_zero.write(str(vertex) + ": " + str(len(col)) + '\n')
+                            coloring_zero.write(str(vertex) + ": " + str(next_color) + '\n')
+                            next_color += 1
 
         correct, nodes = self.ctd(orig, g, col, treeDepth)
 
@@ -172,7 +175,9 @@ class CCAlgorithm(object):
                                        treeDepth, self.ldo)
 
             col = self.col(orig, g, trans, frat, col)
-
+            # print col.color
+            # for key in col:
+            #     print str(mapping[key]) + ": " + str(col[key]),
             # User wants to output execution data
             if self.execdata:
                 with open(col_path + 'colorings/' + str(i), 'w') as coloring_i:
@@ -180,13 +185,15 @@ class CCAlgorithm(object):
                     for vertex, clr in col.color.iteritems():
                         coloring_i.write(str(mapping[vertex]) + ": " + str(clr) + '\n')
                     # Write colors for vertices not in preprocessed graph
+                    next_color = len(col)
                     for vertex in removed_vertices:
                         # If degree is 0, assign color 0
                         if rawgraph.degree(vertex) == 0:
                             coloring_i.write(str(vertex) + ": " + '0' + '\n')
                         # Degree not zero, hence assign color equal to length of coloring
                         else:
-                            coloring_i.write(str(vertex) + ": " + str(len(col)) + '\n')
+                            coloring_i.write(str(vertex) + ": " + str(next_color) + '\n')
+                            next_color += 1
 
             correct, nodes = self.ctd(orig, g, col, treeDepth)
 
@@ -217,12 +224,14 @@ class CCAlgorithm(object):
         for v in col:
             colrenamed[mapping[v]] = col[v]
 
+
         if self.preprocess:
             if self.profile:
                 postProfile = cProfile.Profile()
                 postProfile.enable()
             self.echo("Postprocessing")
             col_restored = postprocess(colrenamed)
+
             self.echo("number of colors:", len(col_restored))
             if self.profile:
                 postProfile.disable()
@@ -234,6 +243,13 @@ class CCAlgorithm(object):
         self.echo("Merging color classes")
         col_merged = merge_colors(rawgraph, col_restored, treeDepth)
         self.echo("number of colors:", len(col_merged))
+
+        if self.execdata:
+                with open(col_path + 'colorings/' + str(i + 1), 'w') as coloring_i:
+                    # Write colors for vertices in the preprocessed graph to the coloring file
+                    for vertex, clr in col_merged.color.iteritems():
+                        coloring_i.write(str(vertex) + ": " + str(clr) + '\n')
+
         if self.profile:
             mergeProfile.disable()
             printProfileStats( "merging", mergeProfile)
