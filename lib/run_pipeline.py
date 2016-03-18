@@ -363,7 +363,10 @@ def write_visinfo(visfile, graph, pattern):
     # Graph and motif info
     config.add_section('graphs')
     config.set('graphs', 'graph', os.path.split(graph)[1])
-    config.set('graphs', 'motif', os.path.split(pattern)[1])
+    if is_basic_pattern(pattern):
+        config.set('graphs', 'motif', os.path.split(pattern + '.txt')[1])
+    else:
+        config.set('graphs', 'motif', os.path.split(pattern)[1])
 
     # Write configuration to the visinfo file
     config.write(visfile)
