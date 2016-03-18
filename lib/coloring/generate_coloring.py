@@ -146,19 +146,21 @@ class CCAlgorithm(object):
 
             removed_vertices = rawgraph.nodes - pp_graph.nodes
             with open(col_path + 'colorings/0', 'w') as coloring_zero:
+                # Write colors for vertices not in preprocessed graph
+                # next_color = 0
+                # for vertex in removed_vertices:
+                #         # If degree is 0, assign color 0
+                #         if rawgraph.degree(vertex) == 0:
+                #             coloring_zero.write(str(vertex) + ": " + '0' + '\n')
+                #         # Degree not zero, hence assign color equal to length of coloring
+                #         else:
+                #             coloring_zero.write(str(vertex) + ": " + str(next_color) + '\n')
+                #             next_color += 1
+
                 # Write colors for vertices in the preprocessed graph to the coloring file
                 for vertex, clr in col.color.iteritems():
+                    # coloring_zero.write(str(mapping[vertex]) + ": " + str(clr + next_color) + '\n')
                     coloring_zero.write(str(mapping[vertex]) + ": " + str(clr) + '\n')
-                # Write colors for vertices not in preprocessed graph
-                next_color = len(col)
-                for vertex in removed_vertices:
-                        # If degree is 0, assign color 0
-                        if rawgraph.degree(vertex) == 0:
-                            coloring_zero.write(str(vertex) + ": " + '0' + '\n')
-                        # Degree not zero, hence assign color equal to length of coloring
-                        else:
-                            coloring_zero.write(str(vertex) + ": " + str(next_color) + '\n')
-                            next_color += 1
 
         correct, nodes = self.ctd(orig, g, col, treeDepth)
 
@@ -181,19 +183,21 @@ class CCAlgorithm(object):
             # User wants to output execution data
             if self.execdata:
                 with open(col_path + 'colorings/' + str(i), 'w') as coloring_i:
+                    # Write colors for vertices not in preprocessed graph
+                    # next_color = 0
+                    # for vertex in removed_vertices:
+                    #     # If degree is 0, assign color 0
+                    #     if rawgraph.degree(vertex) == 0:
+                    #         coloring_i.write(str(vertex) + ": " + '0' + '\n')
+                    #     # Degree not zero, hence assign color equal to length of coloring
+                    #     else:
+                    #         coloring_i.write(str(vertex) + ": " + str(next_color) + '\n')
+                    #         next_color += 1
+
                     # Write colors for vertices in the preprocessed graph to the coloring file
                     for vertex, clr in col.color.iteritems():
+                        # coloring_i.write(str(mapping[vertex]) + ": " + str(clr + next_color) + '\n')
                         coloring_i.write(str(mapping[vertex]) + ": " + str(clr) + '\n')
-                    # Write colors for vertices not in preprocessed graph
-                    next_color = len(col)
-                    for vertex in removed_vertices:
-                        # If degree is 0, assign color 0
-                        if rawgraph.degree(vertex) == 0:
-                            coloring_i.write(str(vertex) + ": " + '0' + '\n')
-                        # Degree not zero, hence assign color equal to length of coloring
-                        else:
-                            coloring_i.write(str(vertex) + ": " + str(next_color) + '\n')
-                            next_color += 1
 
             correct, nodes = self.ctd(orig, g, col, treeDepth)
 
@@ -245,10 +249,22 @@ class CCAlgorithm(object):
         self.echo("number of colors:", len(col_merged))
 
         if self.execdata:
-                with open(col_path + 'colorings/' + str(i + 1), 'w') as coloring_i:
-                    # Write colors for vertices in the preprocessed graph to the coloring file
-                    for vertex, clr in col_merged.color.iteritems():
-                        coloring_i.write(str(vertex) + ": " + str(clr) + '\n')
+            for idx in range(i + 1):
+                with open(col_path + 'colorings/' + str(idx), 'a') as coloring_i:
+                    next_color = len(col)
+                    for vertex in removed_vertices:
+                        # If degree is 0, assign color 0
+                        if rawgraph.degree(vertex) == 0:
+                            coloring_i.write(str(vertex) + ": " + '0' + '\n')
+                        # Degree not zero, hence assign color equal to length of coloring
+                        else:
+                            coloring_i.write(str(vertex) + ": " + str(next_color) + '\n')
+                            next_color += 1
+
+            with open(col_path + 'colorings/' + str(i + 1), 'w') as coloring_i:
+                # Write colors for vertices in the preprocessed graph to the coloring file
+                for vertex, clr in col_merged.color.iteritems():
+                    coloring_i.write(str(vertex) + ": " + str(clr) + '\n')
 
         if self.profile:
             mergeProfile.disable()
@@ -257,7 +273,7 @@ class CCAlgorithm(object):
         return col_merged
     # end def
 
-# end classgit
+# end class
 
 
 def start_coloring(filename, td, cfgfile, output):
