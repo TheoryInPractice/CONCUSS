@@ -292,17 +292,32 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
                                  count_name)
     sweep_class = import_modules('lib.decomposition.' + sweep_name)
 
+    # Output for Combine stage
+    if execdata:
+        combine_path = 'execdata/combine/'
+        if not os.path.exists(combine_path):
+            os.makedirs(combine_path)
+        # Open the file that needs to be passed to the count combiner
+        counts_per_colorset_file = open('execdata/combine/counts_per_colorset', 'w')
+    else:
+        # If execution data is not requested, we don't need to open a file
+        counts_per_colorset_file = None
+
     # Count patterns
     pattern_counter = PatternCounter(G, H, td_lower, coloring,
                                      pattern_class=patternClass,
                                      table_hints=table_hints,
                                      decomp_class=sweep_class,
                                      combiner_class=count_class,
-                                     verbose=verbose)
+                                     verbose=verbose,
+                                     execdata_file=counts_per_colorset_file)
     patternCount = pattern_counter.count_patterns()
     print "Number of occurrences of H in G: {0}".format(patternCount)
 
     if execdata:
+        # Close the color set file
+        counts_per_colorset_file.close()
+
         # if execution data flag is set
         # make and write to visinfo.cfg
         with open('execdata/visinfo.cfg', 'w') as visinfo:
@@ -312,7 +327,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         with ZipFile(execution_data, 'w') as exec_zip:
             # exec_zip.write("execdata/visinfo.cfg", "visinfo.cfg")
 
-            # Write coloring data:
+            # Write data from 'execdata' directory to the zip:
             rootDir = './execdata/'
             for dir_name, _, file_list in os.walk(rootDir):
                 for f_name in file_list:

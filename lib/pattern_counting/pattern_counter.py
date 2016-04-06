@@ -12,6 +12,7 @@ from double_count import InclusionExclusion
 from lib.decomposition import CombinationsSweep
 from lib.graph.treedepth import treedepth
 
+
 class PatternCounter(object):
     """
     Run the decompose, count, and combine parts of the pipeline
@@ -24,7 +25,7 @@ class PatternCounter(object):
 
     def __init__(self, G, H, td_lower, coloring, pattern_class=KPattern, table_hints={},
                  decomp_class=CombinationsSweep,
-                 combiner_class=InclusionExclusion, verbose=False):
+                 combiner_class=InclusionExclusion, verbose=False, execdata_file=None):
         """
         Create the CountCombiner and DecompGenerator objects
 
@@ -43,8 +44,9 @@ class PatternCounter(object):
         self.coloring = coloring
         self.pattern_class = pattern_class
         self.verbose = verbose
+        self.execdata_file = execdata_file
 
-        self.combiner = combiner_class(len(H), coloring, table_hints, td=td_lower)
+        self.combiner = combiner_class(len(H), coloring, table_hints, td=td_lower, execdata_file=execdata_file)
         # TODO: calculate a lower bound on treedepth
         self.decomp_generator = decomp_class(G, coloring, len(H),
                                              self.combiner.tree_depth,
@@ -126,5 +128,6 @@ class PatternCounter(object):
             count = self.count_patterns_from_TDD(tdd)
             # Combine the count from the TDD
             self.combiner.combine_count(count)
+
         # Return the total for the whole graph
         return self.combiner.get_count()

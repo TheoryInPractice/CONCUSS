@@ -8,6 +8,7 @@
 from count_combiner import CountCombiner
 from lib.util.itertools_ext import choose
 
+
 class InclusionExclusion(CountCombiner):
     """
     An inclusion-exclusion-based count combiner implementation
@@ -17,7 +18,7 @@ class InclusionExclusion(CountCombiner):
     those smaller sets of colors.
     """
 
-    def __init__(self, p, coloring, table_hints, td):
+    def __init__(self, p, coloring, table_hints, td, execdata_file=None):
         """
         Set up inclusion-exclusion-specific variables
 
@@ -26,7 +27,7 @@ class InclusionExclusion(CountCombiner):
         The totals returned from dynamic programming are multiplied by these
         coefficients before they are added into our final count.
         """
-        super(InclusionExclusion, self).__init__(p, coloring, table_hints, td)
+        super(InclusionExclusion, self).__init__(p, coloring, table_hints, td, execdata_file)
         self.pattern_count = 0
         self.tree_depth = td
         self.__in_ex = []
@@ -34,6 +35,9 @@ class InclusionExclusion(CountCombiner):
         # before_color_set before combine_count.  We'd be getting the wrong
         # count anyway, so it's better to fail early.
         self.n_colors = None
+
+        # Field that stores count for current color set
+        self.current_color_set_count = 0
 
         # Iterate over all sizes of colors
         for n_colors in range(self.min_p, min(self.tree_depth, self.min_p)-1,
@@ -46,8 +50,7 @@ class InclusionExclusion(CountCombiner):
             discrepancy = self.min_p - n_colors
             remaining_colors = self.chi_p - n_colors
             in_ex_modifier = 1 - sum([choose(remaining_colors, discrepancy-i) *
-                                      mod for i,
-                                      mod in enumerate(self.__in_ex)])
+                                      mod for i, mod in enumerate(self.__in_ex)])
             self.__in_ex.append(in_ex_modifier)
 
         # Get the appropriate DPTable class
@@ -66,6 +69,13 @@ class InclusionExclusion(CountCombiner):
         """Remember how many colors we're looking at currently"""
         self.n_colors = len(colors)
 
+        # If execution data file has been specified
+        if self.execdata_file:
+            # Reset the count for the color set
+            self.current_color_set_count = 0
+            # Write the color set to the file
+            self.execdata_file.write(",".join([str(color) for color in colors]) + " : ")
+
     def combine_count(self, count):
         """
         Add the count returned from dynamic programming on one TDD
@@ -76,6 +86,13 @@ class InclusionExclusion(CountCombiner):
         end, this corrects all the double-counting.
         """
         self.pattern_count += self.__in_ex[self.min_p - self.n_colors] * count
+        self.current_color_set_count += count
+
+    def after_color_set(self, colors):
+        # If execution data file has been specified
+        if self.execdata_file:
+            # Write the count for that color set to the file
+            self.execdata_file.write(str(self.current_color_set_count) + "\n")
 
     def get_count(self):
         """Return the total number of occurrences of the pattern seen"""
