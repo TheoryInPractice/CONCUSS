@@ -24,7 +24,7 @@ class ColorCount(CountCombiner):
     the final count, we simply add all the entries in totals.
     """
 
-    def __init__(self, p, coloring, table_hints, td):
+    def __init__(self, p, coloring, table_hints, td, execdata_file=None):
         """Create tables for keeping track of the separate counts"""
         super(ColorCount, self).__init__(p, coloring, table_hints, td)
         self.totals = Counter()
