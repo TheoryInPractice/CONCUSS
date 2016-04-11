@@ -303,6 +303,11 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         # If execution data is not requested, we don't need to open a file
         counts_per_colorset_file = None
 
+    if count_name != "InclusionExclusion" and execdata:
+        print "CONCUSS cannot output execution data for a combiner class that is not " \
+              "InclusionExclusion. Please use InclusionExclusion"
+        sys.exit(1)
+
     # Count patterns
     pattern_counter = PatternCounter(G, H, td_lower, coloring,
                                      pattern_class=patternClass,

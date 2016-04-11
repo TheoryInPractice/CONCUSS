@@ -35,7 +35,7 @@ class HybridCount(CountCombiner):
     sum.
     """
 
-    def __init__(self, p, coloring, table_hints, td):
+    def __init__(self, p, coloring, table_hints, td, execdata_file=None):
         """
         Build a list of sets of colors on which we perform color-tracking
         dynamic programming.
