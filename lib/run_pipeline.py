@@ -292,6 +292,17 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
                                  count_name)
     sweep_class = import_modules('lib.decomposition.' + sweep_name)
 
+    # Output for Count stage
+    if execdata:
+        count_path = 'execdata/count/'
+        if not os.path.exists(count_path):
+            os.makedirs(count_path)
+        big_component_file = open(count_path+'big_component.txt', 'w')
+        dp_table_file = open(count_path+'dp_table.txt', 'w')
+    else:
+        big_component_file = None
+        dp_table_file = None
+
     # Output for Combine stage
     if execdata:
         combine_path = 'execdata/combine/'
@@ -310,11 +321,16 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
                                      decomp_class=sweep_class,
                                      combiner_class=count_class,
                                      verbose=verbose,
-                                     execdata_file=counts_per_colorset_file)
+                                     big_component_file=big_component_file,
+                                     dp_table_file=dp_table_file,
+                                     colset_count_file=counts_per_colorset_file)
     patternCount = pattern_counter.count_patterns()
     print "Number of occurrences of H in G: {0}".format(patternCount)
 
     if execdata:
+        # Close count stage files
+        big_component_file.close()
+        dp_table_file.close()
         # Close the color set file
         counts_per_colorset_file.close()
 

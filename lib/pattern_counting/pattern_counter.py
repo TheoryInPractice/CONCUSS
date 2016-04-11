@@ -23,9 +23,11 @@ class PatternCounter(object):
     the final count from the whole graph.
     """
 
-    def __init__(self, G, H, td_lower, coloring, pattern_class=KPattern, table_hints={},
-                 decomp_class=CombinationsSweep,
-                 combiner_class=InclusionExclusion, verbose=False, execdata_file=None):
+    def __init__(self, G, H, td_lower, coloring, pattern_class=KPattern,
+                 table_hints={}, decomp_class=CombinationsSweep,
+                 combiner_class=InclusionExclusion, verbose=False,
+                 big_component_file=None, dp_table_file=None,
+                 colset_count_file=None):
         """
         Create the CountCombiner and DecompGenerator objects
 
@@ -44,9 +46,14 @@ class PatternCounter(object):
         self.coloring = coloring
         self.pattern_class = pattern_class
         self.verbose = verbose
-        self.execdata_file = execdata_file
+        self.big_component_file = big_component_file
+        self.big_component = None
+        self.dp_table_file = dp_table_file
+        self.colset_count_file = colset_count_file
 
-        self.combiner = combiner_class(len(H), coloring, table_hints, td=td_lower, execdata_file=execdata_file)
+        self.combiner = combiner_class(len(H), coloring, table_hints,
+                                       td=td_lower,
+                                       execdata_file=colset_count_file)
         # TODO: calculate a lower bound on treedepth
         self.decomp_generator = decomp_class(G, coloring, len(H),
                                              self.combiner.tree_depth,
@@ -124,10 +131,22 @@ class PatternCounter(object):
         """Count the number of occurrences of our pattern in our host graph."""
         # For every TDD given to us by the decomposition generator
         for tdd in self.decomp_generator:
+            # Remember the largest component we've seen if we're making
+            # visualization output
+            if self.big_component_file is not None:
+                if self.big_component is None:
+                    self.big_component = tdd
+                elif len(self.big_component) < len(tdd):
+                    self.big_component = tdd
             # Count patterns in that TDD
             count = self.count_patterns_from_TDD(tdd)
             # Combine the count from the TDD
             self.combiner.combine_count(count)
+
+        # Write the largest component to a file
+        if self.big_component_file is not None:
+            from lib.graph.graphformats import write_edgelist
+            write_edgelist(self.big_component, self.big_component_file)
 
         # Return the total for the whole graph
         return self.combiner.get_count()
