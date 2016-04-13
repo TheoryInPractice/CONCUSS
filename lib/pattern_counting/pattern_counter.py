@@ -46,9 +46,11 @@ class PatternCounter(object):
         self.coloring = coloring
         self.pattern_class = pattern_class
         self.verbose = verbose
+
         self.big_component_file = big_component_file
         self.big_component = None
         self.dp_table_file = dp_table_file
+        self.dp_table = None
         self.colset_count_file = colset_count_file
 
         self.combiner = combiner_class(len(H), coloring, table_hints,
@@ -69,6 +71,9 @@ class PatternCounter(object):
         Arguments:
             decomp:  Treedepth decomposition of a graph
         """
+        # Keep this table if the big component is the current component
+        keep_table = (self.big_component is decomp)
+
         # Get a table object for this decomposition from the CountCombiner
         table = self.combiner.table(decomp)
 
@@ -125,6 +130,11 @@ class PatternCounter(object):
         # if retVal > 0:
         #     print "Return value", retVal
         #     print table
+
+        # Keep the table if this tdd is the big component
+        if keep_table:
+            self.dp_table = table
+
         return retVal
 
     def count_patterns(self):
@@ -147,6 +157,22 @@ class PatternCounter(object):
         if self.big_component_file is not None:
             from lib.graph.graphformats import write_edgelist
             write_edgelist(self.big_component, self.big_component_file)
+
+        # Write the DP table for the largest component to a file
+        if self.dp_table_file is not None:
+            # Write the table in a machine-readable format
+            dp_table = self.dp_table.table
+            for v_tup in sorted(dp_table.keys()):
+                self.dp_table_file.write(str([v for v in v_tup]) + " {\n")
+                for pattern, count in sorted(dp_table[v_tup].iteritems()):
+                    if count > 0:
+                        self.dp_table_file.write("\t" + str(count) + ", ")
+                        vString = [v for v in pattern.vertices]
+                        bString = [str(v) + ":" + str(i) for v, i in
+                                   pattern.boundary.iteritems()]
+                        bString = '[' + ', '.join(bString) + ']'
+                        self.dp_table_file.write(str(vString) + ", " + str(bString) + "\n")
+                self.dp_table_file.write("}\n")
 
         # Return the total for the whole graph
         return self.combiner.get_count()
