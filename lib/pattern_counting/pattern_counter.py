@@ -166,12 +166,12 @@ class PatternCounter(object):
                 self.dp_table_file.write(str([v for v in v_tup]) + " {\n")
                 for pattern, count in sorted(dp_table[v_tup].iteritems()):
                     if count > 0:
-                        self.dp_table_file.write("\t" + str(count) + ", ")
+                        self.dp_table_file.write("\t" + str(count) + "; ")
                         vString = [v for v in pattern.vertices]
                         bString = [str(v) + ":" + str(i) for v, i in
                                    pattern.boundary.iteritems()]
                         bString = '[' + ', '.join(bString) + ']'
-                        self.dp_table_file.write(str(vString) + ", " + str(bString) + "\n")
+                        self.dp_table_file.write(str(vString) + "; " + str(bString) + "\n")
                 self.dp_table_file.write("}\n")
 
         # Return the total for the whole graph
