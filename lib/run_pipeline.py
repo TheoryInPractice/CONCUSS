@@ -298,9 +298,11 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         if not os.path.exists(count_path):
             os.makedirs(count_path)
         big_component_file = open(count_path+'big_component.txt', 'w')
+        tdd_file = open(count_path+'tdd.txt', 'w')
         dp_table_file = open(count_path+'dp_table.txt', 'w')
     else:
         big_component_file = None
+        tdd_file = None
         dp_table_file = None
 
     # Output for Combine stage
@@ -326,6 +328,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
                                      combiner_class=count_class,
                                      verbose=verbose,
                                      big_component_file=big_component_file,
+                                     tdd_file=tdd_file,
                                      dp_table_file=dp_table_file,
                                      colset_count_file=counts_per_colorset_file)
     patternCount = pattern_counter.count_patterns()
@@ -334,6 +337,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
     if execdata:
         # Close count stage files
         big_component_file.close()
+        tdd_file.close()
         dp_table_file.close()
         # Close the color set file
         counts_per_colorset_file.close()

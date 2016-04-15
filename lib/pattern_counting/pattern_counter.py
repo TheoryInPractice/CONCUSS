@@ -26,7 +26,7 @@ class PatternCounter(object):
     def __init__(self, G, H, td_lower, coloring, pattern_class=KPattern,
                  table_hints={}, decomp_class=CombinationsSweep,
                  combiner_class=InclusionExclusion, verbose=False,
-                 big_component_file=None, dp_table_file=None,
+                 big_component_file=None, tdd_file=None, dp_table_file=None,
                  colset_count_file=None):
         """
         Create the CountCombiner and DecompGenerator objects
@@ -49,6 +49,7 @@ class PatternCounter(object):
 
         self.big_component_file = big_component_file
         self.big_component = None
+        self.tdd_file = tdd_file
         self.dp_table_file = dp_table_file
         self.dp_table = None
         self.colset_count_file = colset_count_file
@@ -157,6 +158,13 @@ class PatternCounter(object):
         if self.big_component_file is not None:
             from lib.graph.graphformats import write_edgelist
             write_edgelist(self.big_component, self.big_component_file)
+
+        # Write the TDD of the largest component to a file
+        if self.tdd_file is not None:
+            for v in self.big_component.nodes:
+                parent = self.big_component.vertexRecords[v].parent
+                if parent is not None:
+                    print >> self.tdd_file, v, parent
 
         # Write the DP table for the largest component to a file
         if self.dp_table_file is not None:
