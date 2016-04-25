@@ -311,7 +311,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         if not os.path.exists(combine_path):
             os.makedirs(combine_path)
         # Open the file that needs to be passed to the count combiner
-        counts_per_colorset_file = open('execdata/combine/counts_per_colorset', 'w')
+        counts_per_colorset_file = open('execdata/combine/counts_per_colorset.txt', 'w')
     else:
         # If execution data is not requested, we don't need to open a file
         counts_per_colorset_file = None
