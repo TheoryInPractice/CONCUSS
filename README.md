@@ -24,6 +24,7 @@ Optional arguments:
 * `-c [COLORING], --coloring [COLORING]` - filename of existing *p*-centered
   coloring.  When this option is not selected, CONCUSS will find a coloring itself
 * `-C, --coloring-no-verify` - same as -c but do not verify correctness of existing coloring
+* `-e [EXECUTION_DATA], --execution-data [EXECUTION_DATA]` - output execution data in ZIP format to EXECUTION_DATA
 
 
 Example command:

@@ -40,7 +40,8 @@ def main():
                         help="do not verify correctness of existing coloring",
                         action="store_true")
     parser.add_argument("-e", "--execution-data",
-                        help="name of zip to output CONCUSS execution data to",
+                        help="Output execution data in ZIP format to "
+                        "EXECUTION_DATA",
                         type=str)
 
     # Parse the arguments provided by the user to pass them to the
