@@ -1,7 +1,7 @@
 <img align="right" src="concuss_logo.png">
 #CONCUSS: Combatting Network Complexity Using Structural Sparsity 
 
-CONCUSS is a software tool for large scale graph analytics.  The efficiency and scalability of CONCUSS come from exploiting the underlying [structure and sparsity](/docs/background.md) of the data.  It allows users to count the number of occurences of a specific pattern within a graph (i.e. subgraph isomorphism counting).  These counts are a building block for more complicated scientific analysis, such as motif counting and graphlet degree signature creation.  
+CONCUSS is a software tool for large scale graph analytics.  The efficiency and scalability of CONCUSS come from exploiting the underlying [structure and sparsity](/docs/background.md) of the data.  It allows users to count the number of occurrences of a specific pattern within a graph (i.e. subgraph isomorphism counting).  These counts are a building block for more complicated scientific analysis, such as motif counting and graphlet degree signature creation.  
 
 ## Command line usage
 
@@ -50,7 +50,7 @@ We provide the following commonly used basic patterns:
 
 **1-partite basic patterns:**
 
-<code>clique wheel cycle path star</code>
+`clique wheel cycle path star`
 
 Usage:
 
@@ -68,7 +68,7 @@ Example output:
 
 **Bi-partite basic patterns:**
 
-<code>biclique</code>
+`biclique`
 
 Usage:
 
@@ -86,8 +86,8 @@ Example output:
 
 ## Install and Software Requirements
 
-CONCUSS requires a 64-bit operating system and Python 2.7.x interpreter (e.g. CPython or PyPy).  
-Running the pipeline with PyPy typically decreases runtimes due to native function inlining. 
+CONCUSS requires a 64-bit operating system and Python 2.7.x interpreter (e.g. CPython or PyPy).
+Running the pipeline with PyPy typically decreases runtimes due to native function inlining.
 
 ### Extra Dependencies
 
