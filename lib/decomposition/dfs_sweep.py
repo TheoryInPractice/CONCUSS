@@ -6,9 +6,10 @@
 
 
 import sys
+from copy import copy
+
 from decomp_generator import DecompGenerator
 from lib.util.recordtype import *
-from copy import copy
 from lib.graph.td_decomposition import TDDecomposition
 
 

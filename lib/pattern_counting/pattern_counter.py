@@ -6,9 +6,10 @@
 
 
 from collections import deque
-from lib.util.misc import clear_output_line
+
 from dp import KPattern, DPTable
 from double_count import InclusionExclusion
+from lib.util.misc import clear_output_line
 from lib.decomposition import CombinationsSweep
 from lib.graph.treedepth import treedepth
 

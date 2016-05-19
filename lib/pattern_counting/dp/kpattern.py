@@ -7,6 +7,7 @@
 
 from copy import copy
 import itertools
+
 from lib.util.itertools_ext import xpowerset
 
 

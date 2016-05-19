@@ -7,6 +7,7 @@
 
 import itertools
 import math
+
 from kpattern import KPattern
 from bv_kpattern import BVKPattern
 from lib.util.itertools_ext import xpowerset

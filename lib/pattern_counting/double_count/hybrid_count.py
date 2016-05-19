@@ -7,6 +7,7 @@
 
 from collections import Counter, OrderedDict
 from itertools import combinations
+
 from count_combiner import CountCombiner
 from lib.pattern_counting.dp import ColorDPTable
 from lib.util.itertools_ext import powerset

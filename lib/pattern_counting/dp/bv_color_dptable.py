@@ -8,6 +8,7 @@
 from collections import defaultdict, Counter
 from itertools import product
 from math import ceil, log
+
 from lib.util.itertools_ext import choose
 from dptable import DPTable
 

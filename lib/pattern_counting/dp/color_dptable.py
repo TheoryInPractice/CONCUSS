@@ -7,6 +7,7 @@
 
 from collections import defaultdict, Counter
 from itertools import product
+
 from dptable import DPTable
 
 

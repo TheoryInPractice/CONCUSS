@@ -6,16 +6,16 @@
 #
 
 
-from lib.graph.graphformats import load_graph as load_graph
 import sys
 import os
 import argparse
-#import ConfigParser
+import cProfile
+import pstats
+
+from lib.graph.graphformats import load_graph as load_graph
 from lib.util.parse_config_safe import parse_config_safe
 from lib.graph.graph import Coloring
 from lib.coloring.basic.merge_colors import merge_colors
-import cProfile
-import pstats
 
 #Config = ConfigParser.ConfigParser()
 

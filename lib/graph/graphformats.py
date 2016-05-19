@@ -10,9 +10,9 @@
 import sys
 import collections
 import datetime
-# import graph
-from lib.graph.graph import Graph as Graph
 from xml.sax.saxutils import quoteattr
+
+from lib.graph.graph import Graph as Graph
 
 
 class multidict(object):

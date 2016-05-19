@@ -7,9 +7,10 @@
 
 import sys
 import os
+import itertools
+
 from lib.graph.graph import Graph, Coloring
 from lib.util.recordtype import *
-import itertools
 
 # Define a record type of information about the vertices
 # Attributes:

@@ -5,8 +5,9 @@
 #
 
 
-from kpattern import KPattern
 import math
+
+from kpattern import KPattern
 
 
 class BVKPattern(KPattern):

@@ -6,8 +6,9 @@
 # the three-clause BSD license; see LICENSE.
 #
 
-from lib.graph.graph import Graph
 import sys
+
+from lib.graph.graph import Graph
 
 
 # Global dictionary of supported patterns

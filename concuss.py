@@ -7,8 +7,9 @@
 #
 
 import argparse
-from lib.run_pipeline import runPipeline
 import sys
+
+from lib.run_pipeline import runPipeline
 
 
 def main():

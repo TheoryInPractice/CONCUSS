@@ -6,6 +6,7 @@
 
 
 import itertools
+
 from kpattern import KPattern
 from lib.util.itertools_ext import xpowerset
 

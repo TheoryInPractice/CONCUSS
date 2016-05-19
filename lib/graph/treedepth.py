@@ -6,8 +6,9 @@
 
 
 import sys
-from lib.graph.graphformats import load_graph
 from math import ceil, log
+
+from lib.graph.graphformats import load_graph
 from lib.graph.pattern_generator import supported_patterns
 
 # TODO:  Get a tighter lower bound on the treedepth

@@ -6,8 +6,9 @@
 
 
 import sys
-from decomp_generator import DecompGenerator
 from itertools import combinations
+
+from decomp_generator import DecompGenerator
 from lib.graph.td_decomposition import TDDecomposition
 
 

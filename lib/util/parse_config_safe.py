@@ -7,6 +7,7 @@
 
 import ConfigParser
 
+
 def parse_config_safe(cfg_file):
     '''
     Wrapper that safely and graciously handles config files that don't exist
