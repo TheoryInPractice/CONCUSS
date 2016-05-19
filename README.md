@@ -1,5 +1,5 @@
 <img align="right" src="concuss_logo.png">
-#CONCUSS: Combatting Network Complexity Using Structural Sparsity 
+# CONCUSS: Combatting Network Complexity Using Structural Sparsity
 
 CONCUSS is a software tool for large scale graph analytics.  The efficiency and scalability of CONCUSS come from exploiting the underlying [structure and sparsity](/docs/background.md) of the data.  It allows users to count the number of occurrences of a specific pattern within a graph (i.e. subgraph isomorphism counting).  These counts are a building block for more complicated scientific analysis, such as motif counting and graphlet degree signature creation.  
 
@@ -7,7 +7,7 @@ CONCUSS is a software tool for large scale graph analytics.  The efficiency and 
 
     ./concuss.py [OPTIONS] graph pattern [config]
 
-Count the number of subgraphs of "graph" which are isomorphic to "pattern".
+Count the number of subgraphs of `graph` which are isomorphic to `pattern`.
 
 Positional arguments:
 
@@ -24,15 +24,15 @@ Optional arguments:
 * `-c [COLORING], --coloring [COLORING]` - filename of existing *p*-centered
   coloring.  When this option is not selected, CONCUSS will find a coloring itself
 * `-C, --coloring-no-verify` - same as -c but do not verify correctness of existing coloring
-* `-e [EXECUTION_DATA], --execution-data [EXECUTION_DATA]` - output execution data in ZIP format to EXECUTION_DATA
+* `-e [EXECUTION_DATA], --execution-data [EXECUTION_DATA]` - create ZIP archive `EXECUTION_DATA` for visualization with BEAVr
 
 
 Example command:
 
 Using pattern file:
-	
+
 	./concuss.py testing/graphs/karate.txt testing/graphs/motifs/K3.txt
-	
+
 Example output:
 
 	Number of occurrences of H in G: 270
@@ -120,6 +120,29 @@ where `[VERTEX ID]` and `[COLOR]` are integers ranging from 0 to the number of v
 ## Configuration
 
 The algorithmic workflow in this tool is highly modular, which allows users to swap out subroutines throughout the stages of the pipeline.  A default configuration file is provided in `config/default.cfg`; this is recommended as the "best practice" for efficiency.  Users who want to experiment with algorithmic variations can find details on how to create custom config files in the [documentation](/docs/config_options.md).  
+
+## Visualization with BEAVr
+
+As of version 2.0, CONCUSS supports visualization with
+[BEAVr](https://github.com/TheoryInPractice/BEAVr).  By passing the `-e` option
+to CONCUSS, a ZIP archive is created containing:
+
+* The graph and pattern given to CONCUSS
+* All graph colorings computed by the Color stage of CONCUSS
+* The largest treedepth decomposition found in the Decompose stage of CONCUSS
+* The dynamic programming tables computed for that treedepth decomposition
+* The number of isomorphisms found in each color set
+
+This ZIP archive can be loaded into BEAVr to create an interactive
+visualization of the execution of CONCUSS.  See the BEAVr documentation for
+more information.
+
+CONCUSS can currently only create visualization output with certain
+configuration options for the Compute and Combine stages.  The Compute stage
+must use the KPattern class, and must be set to not reuse dynamic programming
+table entries.  The Combine stage must use the InclusionExclusion method of
+correcting overcounting.  For convenience, a configuration file containing the
+required options is provided as `config/beavr.cfg`.
 
 ## Contribution and Testing (for Developers)
 

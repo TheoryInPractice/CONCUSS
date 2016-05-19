@@ -40,7 +40,7 @@ def main():
                         help="do not verify correctness of existing coloring",
                         action="store_true")
     parser.add_argument("-e", "--execution-data",
-                        help="Output execution data in ZIP format to "
+                        help="Output BEAVr execution data in ZIP format to "
                         "EXECUTION_DATA",
                         type=str)
 
