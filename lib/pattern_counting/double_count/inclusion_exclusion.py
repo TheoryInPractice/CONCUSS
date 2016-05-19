@@ -51,7 +51,8 @@ class InclusionExclusion(CountCombiner):
             discrepancy = self.min_p - n_colors
             remaining_colors = self.chi_p - n_colors
             in_ex_modifier = 1 - sum([choose(remaining_colors, discrepancy-i) *
-                                      mod for i, mod in enumerate(self.__in_ex)])
+                                      mod for i, mod in
+                                      enumerate(self.__in_ex)])
             self.__in_ex.append(in_ex_modifier)
 
         # Get the appropriate DPTable class

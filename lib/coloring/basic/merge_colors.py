@@ -78,8 +78,9 @@ def merge_colors(graph, cols, p):
                  #assert same_color(ordered_col, c2_vertices, c1)
                  #assert same_color(ordered_col, c1_vertices, c1)
                  # check if merge would be p-centered
-                 is_p_centered,_ = check_tree_depth(graph, graph, ordered_col, p)
-                 echo("\t\t",is_p_centered, _)
+                 is_p_centered, _ = check_tree_depth(graph, graph, ordered_col,
+                                                     p)
+                 echo("\t\t", is_p_centered, _)
                  if is_p_centered:
                      # merge the vertices of c2 into c1
                      c1_vertices |= c2_vertices
@@ -87,7 +88,7 @@ def merge_colors(graph, cols, p):
                      echo("\t\tNew c1:", c1_vertices)
                  else:
                      # restore the c2 vertices to their original color
-                     echo("\t\tNot",p+1,"centered")
+                     echo("\t\tNot", p+1, "centered")
                      recolor(ordered_col, c2_vertices, c2)
                      #assert same_color(ordered_col, c2_vertices, c2)
             else:

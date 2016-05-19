@@ -59,7 +59,8 @@ class TDDecomposition(Graph):
             if v < len(result.adj):
                 result.adj[v] |= graph.neighbours(v) & selected
             else:
-                result.adj.extend([set() for x in range(len(result.adj), v + 1)])
+                result.adj.extend(
+                    [set() for x in range(len(result.adj), v + 1)])
                 result.adj[v] |= graph.neighbours(v) & selected
         result.coloring = coloring
         return result

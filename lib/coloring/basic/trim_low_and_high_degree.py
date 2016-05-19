@@ -38,8 +38,8 @@ def trim_low_and_high_degree(g):
 
     # postprocessing
     def restore_high_degree(coloring):
-        #print ("    restored {} zero degree, {} one degree, and {} high degree"
-        #       " vertices").format(len(zero_degree), len(one_degree), 
+        #print ("    restored {} zero degree, {} one degree, and {} high"
+        #       " degree vertices").format(len(zero_degree), len(one_degree), 
         #       len(high_degree))
 
         for v in zero_degree:

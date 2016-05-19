@@ -35,9 +35,12 @@ def treedepth(G, *pattern_info):
 
             return globals()[pattern_name](num_elem_tuple)
         except (KeyError, IndexError):
-            print "\nPattern '" + pattern_info[0] + "' is not supported."
-            print "\n\nor\n\nNumber of vertices in pattern have not been passed."
-            print "\nSupported patterns:\n"
+            print
+            if pattern_info[0] not in supported_patterns:
+                print "Pattern '" + pattern_info[0] + "' is not supported."
+            else:
+                print "Number of vertices in pattern have not been passed."
+            print "Supported patterns:"
             print "\n".join(supported_patterns.iterkeys())
             print
             sys.exit(1)

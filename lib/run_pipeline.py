@@ -311,11 +311,11 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         if not os.path.exists(combine_path):
             os.makedirs(combine_path)
         # Open the file that needs to be passed to the count combiner
-        counts_per_colorset_file = open(
-                'execdata/combine/counts_per_colorset.txt', 'w')
+        colset_count_file = open('execdata/combine/counts_per_colorset.txt',
+                                 'w')
     else:
         # If execution data is not requested, we don't need to open a file
-        counts_per_colorset_file = None
+        colset_count_file = None
 
     if count_name != "InclusionExclusion" and execdata:
         print "CONCUSS can only output execution data using the",
@@ -332,7 +332,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
                                      big_component_file=big_component_file,
                                      tdd_file=tdd_file,
                                      dp_table_file=dp_table_file,
-                                     colset_count_file=counts_per_colorset_file)
+                                     colset_count_file=colset_count_file)
     patternCount = pattern_counter.count_patterns()
     print "Number of occurrences of H in G: {0}".format(patternCount)
 
@@ -342,7 +342,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         tdd_file.close()
         dp_table_file.close()
         # Close the color set file
-        counts_per_colorset_file.close()
+        colset_count_file.close()
 
         # if execution data flag is set
         # make and write to visinfo.cfg

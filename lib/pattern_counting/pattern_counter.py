@@ -82,7 +82,8 @@ class PatternCounter(object):
         # create a post order traversal ordering with a DFS to use in the DP
         ordering = []
         q = deque([decomp.root])
-        #print decomp.root, len(decomp), [(i+1,self.coloring[i]) for i in decomp]
+        #print decomp.root, len(decomp),
+        #print [(i+1,self.coloring[i]) for i in decomp]
         while q:
             curr = q.pop()
             ordering.append(curr)
