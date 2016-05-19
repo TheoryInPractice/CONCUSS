@@ -27,7 +27,8 @@ class InclusionExclusion(CountCombiner):
         The totals returned from dynamic programming are multiplied by these
         coefficients before they are added into our final count.
         """
-        super(InclusionExclusion, self).__init__(p, coloring, table_hints, td, execdata_file)
+        super(InclusionExclusion, self).__init__(p, coloring, table_hints, td,
+                                                 execdata_file)
         self.pattern_count = 0
         self.tree_depth = td
         self.__in_ex = []
@@ -74,7 +75,8 @@ class InclusionExclusion(CountCombiner):
             # Reset the count for the color set
             self.current_color_set_count = 0
             # Write the color set to the file
-            self.execdata_file.write(",".join([str(color) for color in colors]) + " : ")
+            self.execdata_file.write(
+                ",".join([str(color) for color in colors]) + " : ")
 
     def combine_count(self, count):
         """

@@ -39,7 +39,8 @@ class BVKPattern(KPattern):
         self.intMapping = sorted(iter(self.graph))
         self.vertexMapping = []
         for (num, v) in enumerate(self.intMapping):
-            self.vertexMapping.extend([0 for x in range(len(self.vertexMapping), v + 1)])
+            self.vertexMapping.extend(
+                [0 for x in range(len(self.vertexMapping), v + 1)])
             self.vertexMapping[v] = num
 
         # initialize boundary

@@ -102,7 +102,8 @@ class TDDecomposition(Graph):
 
     def add_node(self, u):
         Graph.add_node(self, u)
-        self.vertexRecords.extend([None for x in range(len(vertexRecords), u + 1)])
+        self.vertexRecords.extend(
+            [None for x in range(len(vertexRecords), u + 1)])
         self.vertexRecords[u] = VertexInfo(parent=None, children=[],
                                            depth=None)
 
@@ -112,7 +113,8 @@ class TDDecomposition(Graph):
         # Make a local reference to self.vertexRecords for use in the loop
         vertexRecords = self.vertexRecords
         for n in u:
-            self.vertexRecords.extend([None for x in range(len(vertexRecords), n + 1)])
+            self.vertexRecords.extend(
+                [None for x in range(len(vertexRecords), n + 1)])
             vertexRecords[n] = VertexInfo(parent=None, children=[], depth=None)
 
     def depth(self, v=None):

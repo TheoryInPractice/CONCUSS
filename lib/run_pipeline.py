@@ -311,14 +311,16 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         if not os.path.exists(combine_path):
             os.makedirs(combine_path)
         # Open the file that needs to be passed to the count combiner
-        counts_per_colorset_file = open('execdata/combine/counts_per_colorset.txt', 'w')
+        counts_per_colorset_file = open(
+                'execdata/combine/counts_per_colorset.txt', 'w')
     else:
         # If execution data is not requested, we don't need to open a file
         counts_per_colorset_file = None
 
     if count_name != "InclusionExclusion" and execdata:
-        print "CONCUSS is not set up to output Combine stage execution data for a Combiner class that is not " \
-              "InclusionExclusion.\nIn order to obtain Combine stage data, please use InclusionExclusion."
+        print "CONCUSS can only output execution data using the",
+        print "InclusionExclusion combiner class."
+        sys.exit(1)
 
     # Count patterns
     pattern_counter = PatternCounter(G, H, td_lower, coloring,
@@ -356,7 +358,9 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
             for dir_name, _, file_list in os.walk(rootDir):
                 for f_name in file_list:
                     full_path = dir_name + '/' + f_name
-                    exec_zip.write(full_path, '/'.join(full_path.split('/')[2:]))
+                    exec_zip.write(
+                        full_path,
+                        '/'.join(full_path.split('/')[2:]))
 
             exec_zip.write(cfgFile, os.path.split(cfgFile)[1])
             exec_zip.write(graph, os.path.split(graph)[1])
@@ -368,7 +372,9 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
                 with open(pattern + '.txt', 'w') as pattern_file:
                     write_edgelist(H, pattern_file)
                 # Write the file to the zip
-                exec_zip.write(pattern + '.txt', os.path.split(pattern + '.txt')[1])
+                exec_zip.write(
+                    pattern + '.txt',
+                    os.path.split(pattern + '.txt')[1])
                 # File written to zip, delete it
                 os.remove(pattern + '.txt')
             else:

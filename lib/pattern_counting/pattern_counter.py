@@ -179,7 +179,8 @@ class PatternCounter(object):
                         bString = [str(v) + ":" + str(i) for v, i in
                                    pattern.boundary.iteritems()]
                         bString = '[' + ', '.join(bString) + ']'
-                        self.dp_table_file.write(str(vString) + "; " + str(bString) + "\n")
+                        self.dp_table_file.write(
+                            str(vString) + "; " + str(bString) + "\n")
                 self.dp_table_file.write("}\n")
 
         # Return the total for the whole graph
