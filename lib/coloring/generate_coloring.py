@@ -258,7 +258,7 @@ class CCAlgorithm(object):
 
 
 def start_coloring(filename, td, cfgfile, output):
-    m = ccalgorithm_factory(cfgfile, False)
+    m = ccalgorithm_factory(cfgfile, False, None)
 
     p, fn = os.path.split(filename)
     graphname, e = os.path.splitext(fn)
