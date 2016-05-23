@@ -444,18 +444,23 @@ class Graph(object):
         Given a set of vertices, returns the subgraph
         that the vertices induce on the graph
 
-        :param vertices: vertices in the subgraph
+        :param vertices: vertices in the subgraph, assumed to be in self.nodes
         :return: the induced subgraph
         """
         res = Graph()
         selected = set(vertices)
-        for v in self:
-            if v in selected:
-                res.add_node(v)
 
-        for u, v in self.edges():
-            if u in selected and v in selected:
+        for v in selected:
+            # It is assumed that all vertices in selected in self.nodes.
+            # Vertices not in self.nodes are added as isolates, as they
+            # aren't connected to any other vertices
+            res.add_node(v)
+
+        for v in selected:
+            # Isolates will have no neighbors, thus will have no edges
+            for u in selected & self.neighbours(v):
                 res.add_edge(u, v)
+
         return res
 
     def normalize(self):

@@ -14,6 +14,8 @@ import argparse
 from lib.util.parse_config_safe import parse_config_safe
 from lib.graph.graph import Coloring
 from lib.coloring.basic.merge_colors import merge_colors
+import cProfile
+import pstats
 
 #Config = ConfigParser.ConfigParser()
 
@@ -88,7 +90,7 @@ def ccalgorithm_factory(cfgfile, silent):
 class CCAlgorithm(object):
 
     def __init__(self, preprocess=None, ldo=None, step=None, col=None,
-                 ctd=None, opt=None, silent=False):
+                 ctd=None, opt=None, silent=False, profile=False):
         self.preprocess = preprocess
         self.ldo = ldo
         self.step = step
@@ -97,6 +99,7 @@ class CCAlgorithm(object):
         self.opt = opt
         self.td = None
         self.silent = silent
+        self.profile = profile
 
     def echo(self, *msg):
         if not self.silent:
@@ -111,8 +114,15 @@ class CCAlgorithm(object):
         frat = {}
 
         if self.preprocess:
+            if self.profile:
+                preProfile = cProfile.Profile()
+                preProfile.enable()
             self.echo("Preprocess coloring optimizations")
             pp_graph, postprocess = self.preprocess(rawgraph)
+            if self.profile:
+                preProfile.disable()
+                printProfileStats( "preprocessing", preProfile)
+
 
         # Normalize graph so that its vertices are named 0, ..., n-1
         pp_graph.remove_loops()
@@ -128,6 +138,10 @@ class CCAlgorithm(object):
 
         i = 0
         while (not correct):
+            if self.profile:
+                stepProfile = cProfile.Profile()
+                stepProfile.enable()
+
             i += 1
             self.echo("step", i)
 
@@ -137,6 +151,10 @@ class CCAlgorithm(object):
             col = self.col(orig, g, trans, frat, col)
             correct, nodes = self.ctd(orig, g, col, treeDepth)
 
+            if self.profile:
+                stepProfile.disable()
+                printProfileStats( "step {0}".format(i), stepProfile)
+
             if correct:
                 self.echo("  step", i, "is correct")
                 break
@@ -145,9 +163,15 @@ class CCAlgorithm(object):
         self.echo("number of colors:", len(col))
 
         if self.opt:
+            if self.profile:
+                optProfile = cProfile.Profile()
+                optProfile.enable()
             self.echo("Optimizing...")
             col = self.opt(orig, g, trans, frat, col, i, treeDepth, self)
             self.echo("number of colors:", len(col))
+            if self.profile:
+                optProfile.disable()
+                printProfileStats( "optimizing", optProfile)
 
         # Map coloring back to original vertex labels
         colrenamed = Coloring()
@@ -155,14 +179,25 @@ class CCAlgorithm(object):
             colrenamed[mapping[v]] = col[v]
 
         if self.preprocess:
+            if self.profile:
+                postProfile = cProfile.Profile()
+                postProfile.enable()
             self.echo("Postprocessing")
             col_restored = postprocess(colrenamed)
             self.echo("number of colors:", len(col_restored))
+            if self.profile:
+                postProfile.disable()
+                printProfileStats( "optimizing", postProfile)
 
-
+        if self.profile:
+            mergeProfile = cProfile.Profile()
+            mergeProfile.enable()
         self.echo("Merging color classes")
         col_merged = merge_colors(rawgraph, col_restored, treeDepth)
         self.echo("number of colors:", len(col_merged))
+        if self.profile:
+            mergeProfile.disable()
+            printProfileStats( "merging", mergeProfile)
 
         return col_merged
     # end def
@@ -182,6 +217,24 @@ def start_coloring(filename, td, cfgfile, output):
     save_file(col, 'colorings/' + graphname + str(td), False)
     if output:
         save_file(col, output, True)
+# end def
+
+def printProfileStats(name, profile, percent=1.0):
+    """
+    Prints out the function call statistics using the cProfile and
+    pstats libraries
+
+    Arguments:
+        name:  string labelling the purpose of the statistics
+        profile:  cProfile to print
+        percent:  decimal proportion of list to print.  Default prints
+                all (1.0)
+    """
+    sortby = 'time'
+    restrictions = ""
+    ps = pstats.Stats(profile).strip_dirs().sort_stats(sortby)
+    print "Stats from {0}".format(name)
+    ps.print_stats(restrictions, percent)
 # end def
 
 if __name__ == '__main__':
