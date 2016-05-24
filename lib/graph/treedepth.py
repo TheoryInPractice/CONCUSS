@@ -1,13 +1,14 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
 import sys
-from lib.graph.graphformats import load_graph
 from math import ceil, log
+
+from lib.graph.graphformats import load_graph
 from lib.graph.pattern_generator import supported_patterns
 
 # TODO:  Get a tighter lower bound on the treedepth
@@ -34,9 +35,12 @@ def treedepth(G, *pattern_info):
 
             return globals()[pattern_name](num_elem_tuple)
         except (KeyError, IndexError):
-            print "\nPattern '" + pattern_info[0] + "' is not supported."
-            print "\n\nor\n\nNumber of vertices in pattern have not been passed."
-            print "\nSupported patterns:\n"
+            print
+            if pattern_info[0] not in supported_patterns:
+                print "Pattern '" + pattern_info[0] + "' is not supported."
+            else:
+                print "Number of vertices in pattern have not been passed."
+            print "Supported patterns:"
             print "\n".join(supported_patterns.iterkeys())
             print
             sys.exit(1)

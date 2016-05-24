@@ -1,7 +1,7 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
@@ -25,7 +25,7 @@ class CountCombiner(object):
     """
     __metaclass__ = ABCMeta
 
-    def __init__(self, p, coloring, table_hints, td):
+    def __init__(self, p, coloring, table_hints, td, execdata_file=None):
         """
         Common initialization needed by many CountCombiner subclasses
 
@@ -42,6 +42,7 @@ class CountCombiner(object):
         self.chi_p = len(coloring)
         self.table_hints = table_hints
         self.min_p = min(p, self.chi_p)
+        self.execdata_file = execdata_file
 
     @abstractmethod
     def table(self, G):
@@ -66,6 +67,7 @@ class CountCombiner(object):
         common set of colors.
         """
         pass
+
 
     @abstractmethod
     def get_count(self):

@@ -1,12 +1,13 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
 from collections import Counter, OrderedDict
 from itertools import combinations
+
 from hybrid_count import HybridCount
 from lib.pattern_counting.dp import BVColorDPTable
 from lib.util.itertools_ext import powerset

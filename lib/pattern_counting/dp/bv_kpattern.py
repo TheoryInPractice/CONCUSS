@@ -1,12 +1,13 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
-from kpattern import KPattern
 import math
+
+from kpattern import KPattern
 
 
 class BVKPattern(KPattern):
@@ -39,7 +40,8 @@ class BVKPattern(KPattern):
         self.intMapping = sorted(iter(self.graph))
         self.vertexMapping = []
         for (num, v) in enumerate(self.intMapping):
-            self.vertexMapping.extend([0 for x in range(len(self.vertexMapping), v + 1)])
+            self.vertexMapping.extend(
+                [0 for x in range(len(self.vertexMapping), v + 1)])
             self.vertexMapping[v] = num
 
         # initialize boundary

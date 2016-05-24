@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is

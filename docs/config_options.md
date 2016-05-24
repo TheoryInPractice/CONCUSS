@@ -32,7 +32,7 @@ Below are options for each of the entries in the configuration files.
 ### `low_degree_orientation`
 These modules transform an undirected graph to a directed acyclic one in a way that minimizes the maximum indegree.
 
-- **`basic.low _degree _orientation`**
+- **`basic.low_degree_orientation`**
 
 	Minimize the indegrees as the edges are being oriented.
 
