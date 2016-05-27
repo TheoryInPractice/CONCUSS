@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 . $(dirname $(which $0))/test_common.sh
 
 test_pipeline() {
@@ -19,7 +19,7 @@ test_multi() {
 	filename="/tmp/concuss_out_${replaced_config}.txt"
 	# Run concuss.py with profiling, keeping only the "Stats from" lines
 	# and the one line after them
-	${path}/../concuss.py ${newargs[0]} multi "${path}/config/test_multi.cfg" -c "${coloring_file}" -C -m "${path}/${1}" -p > "${filename}"
+	${path}/../concuss.py ${newargs[0]} multi "${path}/config/test_multi.cfg" -c "${coloring_file}" -C -m "${1}" -p > "${filename}"
 	grep -A1 "Stats from" "${filename}" | remove_grep_separator | tee "/tmp/concuss_test_${replaced_config}.txt"
 	grep "Number of occurrences" "${filename}"
 	common "config/test_multi.cfg"
@@ -54,8 +54,8 @@ test_pipeline "star${newargs[1]}"
 test_pipeline "clique${newargs[1]}"
 
 touch "${path}/graphs/motifs/mfile"
-echo "path${newargs[1]}\nstar${newargs[1]}\nclique${newargs[1]}" > "${path}/graphs/motifs/mfile"
-#> "${path}/graphs/motifs/mfile.txt"
-test_multi graphs/motifs/mfile
+echo -e "path${newargs[1]}\nstar${newargs[1]}\nclique${newargs[1]}" > "${path}/graphs/motifs/mfile"
+#cat mfile
+test_multi "${path}/graphs/motifs/mfile"
 
 rm "${path}/graphs/motifs/mfile"
