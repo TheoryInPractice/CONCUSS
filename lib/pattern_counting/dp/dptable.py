@@ -1,7 +1,7 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
@@ -24,7 +24,7 @@ class DPTable(object):
         self.table = defaultdict(lambda: defaultdict(int))
         self.G = G
 
-    def computeLeaf(self, v, pattern1, motif):
+    def computeLeaf(self, v, pattern1, mem_motif=None):
         """
         Compute table entry for a given leaf and k-pattern
 
@@ -37,12 +37,12 @@ class DPTable(object):
         self_isIsomorphism = self.isIsomorphism
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
-        for pattern2 in pattern1.inverseForget(self.G.depth(v), motif):
+        for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
             patternSum += self_isIsomorphism(v, pattern2)
         # Update appropriate table entry
         self.table[(v,)][pattern1] = patternSum
 
-    def computeInnerVertex(self, v, pattern1, motif):
+    def computeInnerVertex(self, v, pattern1, mem_motif=None):
         """
         Compute table entry for a given single non-leaf and k-pattern
 
@@ -57,12 +57,12 @@ class DPTable(object):
         self_table = self.table
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
-        for pattern2 in pattern1.inverseForget(self.G.depth(v), motif):
+        for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
             patternSum += self_table[tup(g_ch(v))][pattern2]
         # update appropriate table entry
         self_table[(v,)][pattern1] = patternSum
 
-    def computeInnerVertexSet(self, v_list, pattern1, motif):
+    def computeInnerVertexSet(self, v_list, pattern1, mem_motif=None):
         """
         Compute table entry for a given set of vertices and k-pattern
 
@@ -77,7 +77,7 @@ class DPTable(object):
         # Localize variables and functions for faster lookups
         self_table = self.table
         # Iterate through all pattern pairs whose join yields pattern1
-        for pattern2, pattern3 in pattern1.inverseJoin(motif):
+        for pattern2, pattern3 in pattern1.inverseJoin(mem_motif):
             patternSum += (self_table[v_front][pattern2] *
                            self_table[v_last][pattern3])
         # Update appropriate table entry
@@ -134,7 +134,7 @@ class DPTable(object):
                     outputString += str(pattern) + "\n"
         return outputString
 
-    def isIsomorphism(self, v, pattern):
+    def isIsomorphism(self, v, pattern, mem_motif=None):
         """
         Determine whether the root path is an isomorphism to the boundary of
         the k-pattern

@@ -1,14 +1,15 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
 import sys
+from copy import copy
+
 from decomp_generator import DecompGenerator
 from lib.util.recordtype import *
-from copy import copy
 from lib.graph.td_decomposition import TDDecomposition
 
 

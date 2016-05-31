@@ -1,7 +1,7 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
@@ -38,15 +38,15 @@ def trim_low_and_high_degree(g):
 
     # postprocessing
     def restore_high_degree(coloring):
-        #print ("    restored {} zero degree, {} one degree, and {} high degree"
-        #       " vertices").format(len(zero_degree), len(one_degree), 
+        #print ("    restored {} zero degree, {} one degree, and {} high"
+        #       " degree vertices").format(len(zero_degree), len(one_degree), 
         #       len(high_degree))
 
         for v in zero_degree:
             coloring[v] = 0
 
         one_color = len(coloring)
-        print "one_color", one_color
+        #print "one_color", one_color
 
         for v in one_degree:
             coloring[v] = one_color

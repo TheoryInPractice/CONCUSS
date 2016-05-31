@@ -1,7 +1,7 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
@@ -12,7 +12,7 @@ class ForwardDPTable(DPTable):
     def __init__(self, G):
         super(ForwardDPTable, self).__init__(G)
 
-    def computeLeaf(self, v, pattern1):
+    def computeLeaf(self, v, pattern1, pat):
         """
         Compute contributions of a given k-pattern to the DP
         table for a given leaf

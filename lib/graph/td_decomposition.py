@@ -1,15 +1,16 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
 import sys
 import os
+import itertools
+
 from lib.graph.graph import Graph, Coloring
 from lib.util.recordtype import *
-import itertools
 
 # Define a record type of information about the vertices
 # Attributes:
@@ -58,7 +59,8 @@ class TDDecomposition(Graph):
             if v < len(result.adj):
                 result.adj[v] |= graph.neighbours(v) & selected
             else:
-                result.adj.extend([set() for x in range(len(result.adj), v + 1)])
+                result.adj.extend(
+                    [set() for x in range(len(result.adj), v + 1)])
                 result.adj[v] |= graph.neighbours(v) & selected
         result.coloring = coloring
         return result
@@ -102,7 +104,8 @@ class TDDecomposition(Graph):
 
     def add_node(self, u):
         Graph.add_node(self, u)
-        self.vertexRecords.extend([None for x in range(len(vertexRecords), u + 1)])
+        self.vertexRecords.extend(
+            [None for x in range(len(vertexRecords), u + 1)])
         self.vertexRecords[u] = VertexInfo(parent=None, children=[],
                                            depth=None)
 
@@ -112,7 +115,8 @@ class TDDecomposition(Graph):
         # Make a local reference to self.vertexRecords for use in the loop
         vertexRecords = self.vertexRecords
         for n in u:
-            self.vertexRecords.extend([None for x in range(len(vertexRecords), n + 1)])
+            self.vertexRecords.extend(
+                [None for x in range(len(vertexRecords), n + 1)])
             vertexRecords[n] = VertexInfo(parent=None, children=[], depth=None)
 
     def depth(self, v=None):

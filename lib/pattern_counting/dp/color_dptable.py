@@ -1,12 +1,13 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
 from collections import defaultdict, Counter
 from itertools import product
+
 from dptable import DPTable
 
 
@@ -66,7 +67,7 @@ class ColorDPTable(DPTable):
             counter.clear()
         cls.__counters.append(counter)
 
-    def computeLeaf(self, v, pattern1):
+    def computeLeaf(self, v, pattern1, mem_motif=None):
         """
         Compute table entry for a given leaf and k-pattern
 
@@ -80,12 +81,12 @@ class ColorDPTable(DPTable):
         patternSum_update = patternSum.update
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
-        for pattern2 in pattern1.inverseForget(self.G.depth(v)):
+        for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
             patternSum_update(self_isIsomorphism(v, pattern2))
         # Update appropriate table entry
         self.table[(v,)][pattern1] = patternSum
 
-    def computeInnerVertex(self, v, pattern1):
+    def computeInnerVertex(self, v, pattern1, mem_motif=None):
         """
         Compute table entry for a given single non-leaf and k-pattern
 
@@ -108,7 +109,7 @@ class ColorDPTable(DPTable):
         # Update appropriate table entry
         self_table[(v,)][pattern1] = patternSum
 
-    def computeInnerVertexSet(self, v_list, pattern1):
+    def computeInnerVertexSet(self, v_list, pattern1, mem_motif=None):
         """
         Compute table entry for a given set of vertices and k-pattern
 
@@ -140,7 +141,7 @@ class ColorDPTable(DPTable):
         map(freeCounter, self.table[v_last].itervalues())
         map(freeCounter, self.table[v_front].itervalues())
 
-    def isIsomorphism(self, v, pattern):
+    def isIsomorphism(self, v, pattern, mem_motif=None):
         """
         Determine whether the root path is an isomorphism to the boundary of
         the k-pattern

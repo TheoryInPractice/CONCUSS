@@ -1,8 +1,8 @@
 #!/usr/bin/python
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
@@ -40,7 +40,7 @@ CtdColor = recordtype('CtdColor', 'isInSet number nodes')
 
 
 CtdData = recordtype('CtdData', 'numColors treeDepth currentDepth combi ' +
-                     'lastColor responsible color unionFind')
+                     'lastColor responsible color unionFind max_id')
 
 # int numColors:          number of all colors, whose frequency are at least 2
 # int treeDepth:          the tree depth, which is checked
@@ -127,7 +127,7 @@ def ufs_find(ufs, node):
 
 
 def check_graph_center(g, col, data):
-    n = g.get_max_id()+1
+    n = data.max_id+1
 
     if (data.currentDepth == 1):
         ufs = [0] * n
@@ -205,7 +205,8 @@ def check_tree_depth(orig, g, col, treeDepth, output=False):
         combi=set(),
         currentDepth=0,
         lastColor=0,
-        unionFind=[]
+        unionFind=[],
+        max_id=orig.get_max_id()
     )
 
     for i in xrange(0, numColors):
