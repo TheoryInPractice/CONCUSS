@@ -87,7 +87,7 @@ Example output:
 	
 ## Counting multiple patterns in a single CONCUSS run
 
-CONCUSS supports counting multiple patterns in a single pipeline run. In order to use the multiple pattern pipeline, CONCUSS needs to be run using the command line argument `-m [FILENAME]` where `[FILENAME]` is a file containing descriptions of patterns either as file paths or [basic patterns](./#basicpatterns).
+CONCUSS supports counting multiple patterns in a single pipeline run. In order to use the multiple pattern pipeline, CONCUSS needs to be run using the command line argument `-m [FILENAME]` where `[FILENAME]` is a file containing descriptions of patterns either as file paths or [basic patterns](./#basic-patterns).
 For the positional argument `pattern`, the keyword `multi` must be used to specify that we are counting multiple patterns.
 
 The format for the multiple pattern file is as follows. Specify each pattern as a basic pattern or a filename on a separate line.
