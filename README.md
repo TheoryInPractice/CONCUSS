@@ -12,7 +12,7 @@ Count the number of subgraphs of `graph` which are isomorphic to `pattern`.
 Positional arguments:
 
 * `graph` - filename of the host graph
-* `pattern` - filename or basic pattern. See basic patterns section below.
+* `pattern` - filename, basic pattern or `multi`. See basic patterns and multiple-patterns sections below.
 * `config` - filename of the configuration settings (defaults to `config/default.cfg`)
 
 Optional arguments:
@@ -87,7 +87,7 @@ Example output:
 	
 ## Counting multiple patterns in a single CONCUSS run
 
-CONCUSS supports counting multiple patterns in a single pipeline run. In order to use the multiple pattern pipeline, CONCUSS needs to be run using the command line argument `-m [FILENAME]` where `[FILENAME]` is a file containing descriptions of patterns either as file paths or [basic patterns](./#basic-patterns).
+CONCUSS supports counting multiple patterns in a single pipeline run. In order to use the multiple pattern pipeline, CONCUSS needs to be run using the command line argument `-m [FILENAME]` where `[FILENAME]` is a file containing descriptions of patterns either as file paths or [basic patterns](#basic-patterns).
 For the positional argument `pattern`, the keyword `multi` must be used to specify that we are counting multiple patterns.
 
 The format for the multiple pattern file is as follows. Specify each pattern as a basic pattern or a filename on a separate line.
@@ -97,6 +97,12 @@ The format for the multiple pattern file is as follows. Specify each pattern as 
     path/to/pattern/file3
     ...
     basic_pattern_n
+    
+Example file: testing/graphs/motifs/multifile.txt
+
+    star3
+    path3
+    testing/graphs/motifs/K3.txt
 
 Example command:
     
