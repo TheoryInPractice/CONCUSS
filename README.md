@@ -85,12 +85,12 @@ Example output:
 
 	Number of occurrences of H in G: 288
 	
-## Counting multiple motifs in a single CONCUSS run
+## Counting multiple patterns in a single CONCUSS run
 
-CONCUSS supports counting multiple motifs in a single pipeline run. In order to use the multiple motif pipeline, CONCUSS needs to be run using the command line argument `-m [FILENAME]` where `[FILENAME]` is a file containing descriptions of motifs either as file paths or [basic patterns](README.md/#basicpatterns).
+CONCUSS supports counting multiple patterns in a single pipeline run. In order to use the multiple pattern pipeline, CONCUSS needs to be run using the command line argument `-m [FILENAME]` where `[FILENAME]` is a file containing descriptions of patterns either as file paths or [basic patterns](./#basicpatterns).
 For the positional argument `pattern`, the keyword `multi` must be used to specify that we are counting multiple patterns.
 
-The format for the multiple motif file is as follows. Specify each pattern as a basic pattern or a filename on a separate line.
+The format for the multiple pattern file is as follows. Specify each pattern as a basic pattern or a filename on a separate line.
 
     basic_pattern_1
     basic_pattern_2
