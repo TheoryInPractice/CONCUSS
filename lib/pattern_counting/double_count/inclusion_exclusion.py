@@ -95,7 +95,7 @@ class InclusionExclusion(CountCombiner):
         self.pattern_count += self.__in_ex[self.min_p - self.n_colors] * count
         self.current_color_set_count += count
 
-        #return self.__in_ex[self.min_p - self.n_colors] * count
+        # return self.__in_ex[self.min_p - self.n_colors] * count
 
     def after_color_set(self, colors):
         # If execution data file has been specified

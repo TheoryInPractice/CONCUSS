@@ -79,7 +79,7 @@ class PatternCounter(object):
                                              after_color_set_callbacks,
                                              self.verbose)
 
-    def count_patterns_from_TDD(self, decomp, pat):
+    def count_patterns_from_TDD(self, decomp, pat, idx):
         """
         Count the number of occurrences of our pattern in the given treedepth
         decomposition.
@@ -91,7 +91,7 @@ class PatternCounter(object):
         keep_table = (self.big_component is decomp)
 
         # Get a table object for this decomposition from the CountCombiner
-        table = self.combiners[0].table(decomp)
+        table = self.combiners[idx].table(decomp)
 
         # create a post order traversal ordering with a DFS to use in the DP
         ordering = []
@@ -160,7 +160,7 @@ class PatternCounter(object):
 
         final_count = [0]*len(self.multi)
         # For every TDD given to us by the decomposition generator
-        #tdd_store = [tdd for tdd in self.decomp_generator]
+        # tdd_store = [tdd for tdd in self.decomp_generator]
 
         # for idx, pat in enumerate(self.multi):
         #     print idx, str(pat)
@@ -180,7 +180,7 @@ class PatternCounter(object):
 
             # Count patterns in that TDD
             for idx, pat in enumerate(self.multi):
-                count = self.count_patterns_from_TDD(tdd, pat)
+                count = self.count_patterns_from_TDD(tdd, pat, idx)
                 # Combine the count from the TDD
                 self.combiners[idx].combine_count(count)
 

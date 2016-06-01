@@ -277,7 +277,7 @@ class DFSSweep(DecompGenerator):
                 # Flexible  comps[root] = {root}
                 if root >= len(comps):
                     comps.extend([{x} for x in range(len(comps), root)])
-                    comps.insert(root,{root})
+                    comps.insert(root, {root})
 
                 comps[root].add(idx)
 

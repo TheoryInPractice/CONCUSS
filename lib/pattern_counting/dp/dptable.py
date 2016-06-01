@@ -38,7 +38,7 @@ class DPTable(object):
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
         for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
-            patternSum += self_isIsomorphism(v, pattern2)
+            patternSum += self_isIsomorphism(v, pattern2, mem_motif)
         # Update appropriate table entry
         self.table[(v,)][pattern1] = patternSum
 

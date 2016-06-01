@@ -62,7 +62,7 @@ class BVColorDPTable(DPTable):
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
         for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
-            patternSum += self_isIsomorphism(v, pattern2)
+            patternSum += self_isIsomorphism(v, pattern2, mem_motif)
         # Update appropriate table entry
         self.table[(v,)][pattern1] = patternSum
 
@@ -81,7 +81,7 @@ class BVColorDPTable(DPTable):
         self_reuse = self.reuse
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
-        for pattern2 in pattern1.inverseForget(self.G.depth(v)):
+        for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
             # patternSum += self.safeLookup(tuple(v.children), pattern2)
             patternSum += self_table[ch_v][pattern2]
             if self_reuse:
@@ -109,7 +109,7 @@ class BVColorDPTable(DPTable):
         tab_front = self_table[v_front]
         tab_last = self_table[v_last]
         # Iterate through all pattern pairs whose join yields pattern1.
-        for pattern2, pattern3 in pattern1.inverseJoin():
+        for pattern2, pattern3 in pattern1.inverseJoin(mem_motif):
             # patternSum += self.safeLookup(v_front, pattern2)* \
             #     self.safeLookup(v_last, pattern3)
             # Get the table entry [v_front][pattern2]

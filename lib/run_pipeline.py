@@ -85,6 +85,10 @@ def p_centered_coloring(graph, td, cfgfile, verbose, execdata):
 
 
 def pattern_argument_error_msg(pat_arg):
+    """
+    Prints error message when pattern argument is invalid and exits the program
+    """
+
     print "\nThe argument '" + pat_arg + "' provided for 'pattern' is invalid.\n"
     print "Please use format:\n\n" \
           "\033[1mfilename.txt \033[0m\n" \
@@ -103,23 +107,41 @@ def pattern_argument_error_msg(pat_arg):
 
 
 def is_basic_pattern(pattern):
+    """
+    Checks if a given pattern is a valid basic pattern
+    :param pattern: The pattern to be checked
+    :return: True if pattern is a valid basic pattern, False otherwise
+    """
+
     name, ext = os.path.splitext(pattern)
     return ext == ""
 
 
 def get_pattern_from_file(filename):
+    """
+    Load pattern from a file
+    :param filename: The name of the pattern file
+    :return: A graph object representing the pattern along with its treedepth
+    """
+
     # Argument is a filename
-        try:
-            # Try to load the graph from file
-            H = load_graph(filename)
-            # Return pattern along with lower bound on its treedepth
-            return H, treedepth(H)
-        except Exception:
-            # Invalid file extension
-            pattern_argument_error_msg(filename)
+    try:
+        # Try to load the graph from file
+        H = load_graph(filename)
+        # Return pattern along with lower bound on its treedepth
+        return H, treedepth(H)
+    except Exception:
+        # Invalid file extension
+        pattern_argument_error_msg(filename)
 
 
 def get_pattern_from_generator(pattern):
+    """
+    Get pattern from pattern generator since basic pattern was specified
+    :param pattern: Name of basic pattern
+    :return: Pattern graph and its treedepth
+    """
+
     import re
     p = re.compile(r'(\d*)')
     # Parse out the different parts of the argument
@@ -157,6 +179,7 @@ def get_pattern_from_generator(pattern):
     else:
         # Number of vertices not provided in argument
         pattern_argument_error_msg(pattern)
+
 
 def parse_pattern_argument(pattern):
     """
@@ -223,13 +246,19 @@ def parse_pattern_argument(pattern):
 
 
 def parse_multifile(multifile):
+    """
+    Parse the multiple motif file provided
+    :param multifile: The file containing multiple motif descriptions
+    :return: An array of pattern graph objects and the lowest treedepth
+    """
+
     if multifile:
         try:
             m_file = multifile[0]
             if m_file:
                 with open(m_file, 'r') as pattern_reader:
                     patterns = [line[:-1] for line in pattern_reader]
-                    multi=[]
+                    multi = []
                     td_lower = sys.maxint
                     for pat in patterns:
                         graph, td = parse_pattern_argument(pat)
@@ -279,7 +308,6 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         else:
             H, td_lower = get_pattern_from_file(pattern)
         multi = [H]
-
 
     # Read graphs from file
     G = load_graph(graph)

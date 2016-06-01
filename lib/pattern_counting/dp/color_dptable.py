@@ -82,7 +82,7 @@ class ColorDPTable(DPTable):
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
         for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
-            patternSum_update(self_isIsomorphism(v, pattern2))
+            patternSum_update(self_isIsomorphism(v, pattern2, mem_motif))
         # Update appropriate table entry
         self.table[(v,)][pattern1] = patternSum
 
@@ -102,7 +102,7 @@ class ColorDPTable(DPTable):
         patternSum_update = patternSum.update
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
-        for pattern2 in pattern1.inverseForget(self.G.depth(v)):
+        for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
             # patternSum += self.safeLookup(tuple(v.children), pattern2)
             patternSum_update(self_table[ch_v][pattern2])
             DPTable_freeCounter(self_table[ch_v][pattern2])
@@ -124,7 +124,7 @@ class ColorDPTable(DPTable):
         # Localize the table to speed up the loop
         self_table = self.table
         # Iterate through all pattern pairs whose join yields pattern1.
-        for pattern2, pattern3 in pattern1.inverseJoin():
+        for pattern2, pattern3 in pattern1.inverseJoin(mem_motif):
             # patternSum += self.safeLookup(v_front, pattern2)*
             #                               self.safeLookup(v_last, pattern3)
             for pair in product(self_table[v_front][pattern2].iteritems(),
@@ -163,7 +163,7 @@ class ColorDPTable(DPTable):
 
         # Create mapping of vertices of H to vertices of G
         HtoGMap = defaultdict(lambda: None)
-        for u, idx in pattern.boundaryIter():
+        for u, idx in pattern.boundaryIter(mem_motif):
             try:
                 HtoGMap[u] = P_v[idx]
             except IndexError:
