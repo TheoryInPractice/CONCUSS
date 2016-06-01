@@ -24,6 +24,7 @@ Optional arguments:
 * `-c [COLORING], --coloring [COLORING]` - filename of existing *p*-centered
   coloring.  When this option is not selected, CONCUSS will find a coloring itself
 * `-C, --coloring-no-verify` - same as -c but do not verify correctness of existing coloring
+* `-m [MULTI_PAT_FILE], --multi_pat_file [MULTI_PAT_FILE]` - file containing multiple pattern descriptions (as file paths and/or basic patterns)
 * `-e [EXECUTION_DATA], --execution-data [EXECUTION_DATA]` - create ZIP archive `EXECUTION_DATA` for visualization with BEAVr
 
 
@@ -83,6 +84,29 @@ Example command:
 Example output:
 
 	Number of occurrences of H in G: 288
+	
+## Counting multiple motifs in a single CONCUSS run
+
+CONCUSS supports counting multiple motifs in a single pipeline run. In order to use the multiple motif pipeline, CONCUSS needs to be run using the command line argument `-m [FILENAME]` where `[FILENAME]` is a file containing descriptions of motifs either as file paths or [basic patterns](README.md/#basicpatterns).
+For the positional argument `pattern`, the keyword `multi` must be used to specify that we are counting multiple patterns.
+
+The format for the multiple motif file is as follows. Specify each pattern as a basic pattern or a filename on a separate line.
+
+    basic_pattern_1
+    basic_pattern_2
+    path/to/pattern/file3
+    ...
+    basic_pattern_n
+
+Example command:
+    
+    ./concuss.py testing/graphs/karate.txt multi testing/config/fast_cs_inex.cfg -m testing/graphs/motifs/multifile.txt
+    
+Example output:
+
+    Number of occurrences of star3 in G: 786
+    Number of occurrences of path3 in G: 786
+    Number of occurrences of testing/graphs/motifs/K3.txt in G: 270
 
 ## Install and Software Requirements
 
