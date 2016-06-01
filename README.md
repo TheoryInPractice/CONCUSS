@@ -98,7 +98,7 @@ The format for the multiple pattern file is as follows. Specify each pattern as 
     ...
     basic_pattern_n
     
-Example file: testing/graphs/motifs/multifile.txt
+Example file: [multifile.txt](testing/graphs/motifs/multifile.txt)
 
     star3
     path3
