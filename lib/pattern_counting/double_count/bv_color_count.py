@@ -1,11 +1,12 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
 from collections import Counter
+
 from count_combiner import CountCombiner
 
 
@@ -24,7 +25,7 @@ class BVColorCount(CountCombiner):
     the final count, we simply add all the entries in totals.
     """
 
-    def __init__(self, p, coloring, table_hints, td):
+    def __init__(self, p, coloring, table_hints, td, execdata_file=None):
         """Create tables for keeping track of the separate counts"""
         super(BVColorCount, self).__init__(p, coloring, table_hints, td)
         self.totals = Counter()

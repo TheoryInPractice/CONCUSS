@@ -1,14 +1,15 @@
 #!/usr/bin/env python2.7
 
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 import argparse
-from lib.run_pipeline import runPipeline
 import sys
+
+from lib.run_pipeline import runPipeline
 
 
 def main():
@@ -39,6 +40,10 @@ def main():
     parser.add_argument("-C", "--coloring-no-verify",
                         help="do not verify correctness of existing coloring",
                         action="store_true")
+    parser.add_argument("-e", "--execution-data",
+                        help="Output BEAVr execution data in ZIP format to "
+                        "EXECUTION_DATA",
+                        type=str)
 
     # Parse the arguments provided by the user to pass them to the
     # runPipeline method
@@ -47,7 +52,7 @@ def main():
     # Run the pipeline
     runPipeline(args.graph, args.pattern, args.config, args.coloring,
                 args.coloring_no_verify, args.output, args.verbose,
-                args.profile)
+                args.profile, args.execution_data)
 
 if __name__ == "__main__":
     main()

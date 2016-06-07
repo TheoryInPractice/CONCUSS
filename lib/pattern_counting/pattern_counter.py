@@ -1,16 +1,18 @@
 #
-# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/, and is
-# Copyright (C) North Carolina State University, 2015. It is licensed under
-# the three-clause BSD license; see LICENSE.
+# This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
+# and is Copyright (C) North Carolina State University, 2015. It is licensed
+# under the three-clause BSD license; see LICENSE.
 #
 
 
 from collections import deque
-from lib.util.misc import clear_output_line
+
 from dp import KPattern, DPTable
 from double_count import InclusionExclusion
+from lib.util.misc import clear_output_line
 from lib.decomposition import CombinationsSweep
 from lib.graph.treedepth import treedepth
+
 
 class PatternCounter(object):
     """
@@ -22,9 +24,11 @@ class PatternCounter(object):
     the final count from the whole graph.
     """
 
-    def __init__(self, G, H, td_lower, coloring, pattern_class=KPattern, table_hints={},
-                 decomp_class=CombinationsSweep,
-                 combiner_class=InclusionExclusion, verbose=False):
+    def __init__(self, G, H, td_lower, coloring, pattern_class=KPattern,
+                 table_hints={}, decomp_class=CombinationsSweep,
+                 combiner_class=InclusionExclusion, verbose=False,
+                 big_component_file=None, tdd_file=None, dp_table_file=None,
+                 colset_count_file=None):
         """
         Create the CountCombiner and DecompGenerator objects
 
@@ -44,7 +48,16 @@ class PatternCounter(object):
         self.pattern_class = pattern_class
         self.verbose = verbose
 
-        self.combiner = combiner_class(len(H), coloring, table_hints, td=td_lower)
+        self.big_component_file = big_component_file
+        self.big_component = None
+        self.tdd_file = tdd_file
+        self.dp_table_file = dp_table_file
+        self.dp_table = None
+        self.colset_count_file = colset_count_file
+
+        self.combiner = combiner_class(len(H), coloring, table_hints,
+                                       td=td_lower,
+                                       execdata_file=colset_count_file)
         # TODO: calculate a lower bound on treedepth
         self.decomp_generator = decomp_class(G, coloring, len(H),
                                              self.combiner.tree_depth,
@@ -60,13 +73,17 @@ class PatternCounter(object):
         Arguments:
             decomp:  Treedepth decomposition of a graph
         """
+        # Keep this table if the big component is the current component
+        keep_table = (self.big_component is decomp)
+
         # Get a table object for this decomposition from the CountCombiner
         table = self.combiner.table(decomp)
 
         # create a post order traversal ordering with a DFS to use in the DP
         ordering = []
         q = deque([decomp.root])
-        #print decomp.root, len(decomp), [(i+1,self.coloring[i]) for i in decomp]
+        #print decomp.root, len(decomp),
+        #print [(i+1,self.coloring[i]) for i in decomp]
         while q:
             curr = q.pop()
             ordering.append(curr)
@@ -116,15 +133,57 @@ class PatternCounter(object):
         # if retVal > 0:
         #     print "Return value", retVal
         #     print table
+
+        # Keep the table if this tdd is the big component
+        if keep_table:
+            self.dp_table = table
+
         return retVal
 
     def count_patterns(self):
         """Count the number of occurrences of our pattern in our host graph."""
         # For every TDD given to us by the decomposition generator
         for tdd in self.decomp_generator:
+            # Remember the largest component we've seen if we're making
+            # visualization output
+            if self.big_component_file is not None:
+                if self.big_component is None:
+                    self.big_component = tdd
+                elif len(self.big_component) < len(tdd):
+                    self.big_component = tdd
             # Count patterns in that TDD
             count = self.count_patterns_from_TDD(tdd)
             # Combine the count from the TDD
             self.combiner.combine_count(count)
+
+        # Write the largest component to a file
+        if self.big_component_file is not None:
+            from lib.graph.graphformats import write_edgelist
+            write_edgelist(self.big_component, self.big_component_file)
+
+        # Write the TDD of the largest component to a file
+        if self.tdd_file is not None:
+            for v in self.big_component.nodes:
+                parent = self.big_component.vertexRecords[v].parent
+                if parent is not None:
+                    print >> self.tdd_file, v, parent
+
+        # Write the DP table for the largest component to a file
+        if self.dp_table_file is not None:
+            # Write the table in a machine-readable format
+            dp_table = self.dp_table.table
+            for v_tup in sorted(dp_table.keys()):
+                self.dp_table_file.write(str([v for v in v_tup]) + " {\n")
+                for pattern, count in sorted(dp_table[v_tup].iteritems()):
+                    if count > 0:
+                        self.dp_table_file.write("\t" + str(count) + "; ")
+                        vString = [v for v in pattern.vertices]
+                        bString = [str(v) + ":" + str(i) for v, i in
+                                   pattern.boundary.iteritems()]
+                        bString = '[' + ', '.join(bString) + ']'
+                        self.dp_table_file.write(
+                            str(vString) + "; " + str(bString) + "\n")
+                self.dp_table_file.write("}\n")
+
         # Return the total for the whole graph
         return self.combiner.get_count()
