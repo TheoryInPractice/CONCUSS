@@ -106,7 +106,7 @@ Example file: [multi_size3.txt](testing/graphs/motifs/multi_size3.txt)
 
 Example command:
     
-    ./concuss.py testing/graphs/karate.txt multi testing/config/fast_cs_inex.cfg -m testing/graphs/motifs/multifile.txt
+    ./concuss.py testing/graphs/karate.txt multi -m testing/graphs/motifs/multi_size3.txt
     
 Example output:
 
