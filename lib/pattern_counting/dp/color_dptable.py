@@ -50,7 +50,7 @@ class ColorDPTable(DPTable):
         # Else, just make new counters and never get rid of old ones.
         else:
             self.getCounter = Counter
-            self.freeCounter = lambda _: None
+            self.freeCounter = lambda _, mem_motif: None
 
     @classmethod
     def __getCounter(cls, mem_motif):
