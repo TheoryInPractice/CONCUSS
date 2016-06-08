@@ -42,26 +42,29 @@ class ColorDPTable(DPTable):
         """
         self.table = defaultdict(lambda: defaultdict(Counter))
         self.G = G
-
+        self.reuse = reuse
         # If we got reuse=True, store unused Counters for reuse.
         if reuse:
             self.getCounter = ColorDPTable.__getCounter
             self.freeCounter = ColorDPTable.__freeCounter
         # Else, just make new counters and never get rid of old ones.
         else:
-            self.getCounter = Counter
+            #self.getCounter = Counter
+            self.getCounter = ColorDPTable.__getCounter
             self.freeCounter = lambda _, mem_motif: None
 
     @classmethod
-    def __getCounter(cls, mem_motif):
+    def __getCounter(cls, mem_motif, reuse=True):
         """Return an empty counter, either from the list or newly created"""
         # if cls.__counters:
         #     return cls.__counters.pop()
         # else:
         #     return Counter()
-
-        if mem_motif in cls.__counters and cls.__counters[mem_motif]:
-            return cls.__counters[mem_motif].pop()
+        if reuse:
+            if mem_motif in cls.__counters and cls.__counters[mem_motif]:
+                return cls.__counters[mem_motif].pop()
+            else:
+                return Counter()
         else:
             return Counter()
 
@@ -82,7 +85,7 @@ class ColorDPTable(DPTable):
                 v:  leaf Vertex
                 pattern1:  kPattern
         """
-        patternSum = self.getCounter(mem_motif)
+        patternSum = self.getCounter(mem_motif, self.reuse)
         # Localize functions to speed up the loop
         self_isIsomorphism = self.isIsomorphism
         patternSum_update = patternSum.update
@@ -101,7 +104,7 @@ class ColorDPTable(DPTable):
                 v:  leaf Vertex
                 pattern1:  kPattern
         """
-        patternSum = self.getCounter(mem_motif)
+        patternSum = self.getCounter(mem_motif, self.reuse)
         # Localize functions to speed up the loop
         self_table = self.table
         ch_v = tuple(self.G.children(v))
@@ -124,7 +127,7 @@ class ColorDPTable(DPTable):
                 v_list:  ordered iterable of Vertex
                 pattern1:  kPattern
         """
-        patternSum = self.getCounter(mem_motif)
+        patternSum = self.getCounter(mem_motif, self.reuse)
         # Split last vertex from the rest
         v_last = v_list[-1:]
         v_front = v_list[:-1]
