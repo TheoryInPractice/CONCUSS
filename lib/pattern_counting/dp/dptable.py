@@ -83,7 +83,7 @@ class DPTable(object):
         # Update appropriate table entry
         self_table[v_list][pattern1] = patternSum
 
-    def computeInnerVertexSetCleanup(self, leftChildren):
+    def computeInnerVertexSetCleanup(self, leftChildren, mem_motif=None):
         pass
 
     def lookup(self, v, pattern):

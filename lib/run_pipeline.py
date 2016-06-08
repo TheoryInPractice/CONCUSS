@@ -259,12 +259,14 @@ def parse_multifile(multifile):
                 with open(m_file, 'r') as pattern_reader:
                     patterns = [line[:-1] for line in pattern_reader]
                     multi = []
-                    td_lower = sys.maxint
+                    td_list = []
+                    #td_lower = sys.maxint
                     for pat in patterns:
                         graph, td = parse_pattern_argument(pat)
                         multi.append(graph)
-                        td_lower = min(td, td_lower)
-                    return multi, td_lower
+                        td_list.append(td)
+                        #td_lower = min(td, td_lower)
+                    return multi, td_list
             else:
                 print "\nPlease provide a valid multi-pattern file while using argument 'multi'\n"
                 sys.exit(1)
@@ -300,7 +302,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         readProfile.enable()
 
     if pattern == 'multi':
-        multi, td_lower = parse_multifile(multifile)
+        multi, td_list = parse_multifile(multifile)
     else:
         basic_pattern = is_basic_pattern(pattern)
         if basic_pattern:
@@ -308,6 +310,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         else:
             H, td_lower = get_pattern_from_file(pattern)
         multi = [H]
+        td_list = [td_lower]
 
     # Read graphs from file
     G = load_graph(graph)
@@ -392,7 +395,7 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         # Exit the program with an error code of 1
         sys.exit(1)
 
-    pattern_counter = PatternCounter(G, multi, td_lower, coloring,
+    pattern_counter = PatternCounter(G, multi, td_list, coloring,
                                      pattern_class=patternClass,
                                      table_hints=table_hints,
                                      decomp_class=sweep_class,

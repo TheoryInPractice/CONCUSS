@@ -24,7 +24,7 @@ class PatternCounter(object):
     the final count from the whole graph.
     """
 
-    def __init__(self, G, multi, td_lower, coloring, pattern_class=KPattern,
+    def __init__(self, G, multi, td_list, coloring, pattern_class=KPattern,
                  table_hints={}, decomp_class=CombinationsSweep,
                  combiner_class=InclusionExclusion, verbose=False,
                  big_component_file=None, tdd_file=None, dp_table_file=None,
@@ -56,12 +56,15 @@ class PatternCounter(object):
         self.dp_table = None
         self.colset_count_file = colset_count_file
 
+        # print [len(motif) for motif in multi]
+        # print td_list
+
         # self.combiner = combiner_class(len(max(multi, key=len)), coloring, table_hints,
         #                                td=td_lower,
         #                                execdata_file=colset_count_file)
 
-        self.combiners = [combiner_class(len(motif), coloring, table_hints, td=td_lower,
-                                        execdata_file=colset_count_file) for motif in multi]
+        self.combiners = [combiner_class(len(multi[idx]), coloring, table_hints, td=td_list[idx],
+                                        execdata_file=colset_count_file) for idx in range(len(multi))]
 
         before_color_set_callbacks = [combiner.before_color_set for combiner in self.combiners]
         after_color_set_callbacks = [combiner.after_color_set for combiner in self.combiners]
@@ -74,7 +77,7 @@ class PatternCounter(object):
         #                                      self.verbose)
 
         self.decomp_generator = decomp_class(G, coloring, len(max(multi, key=len)),
-                                             self.combiners[0].tree_depth,
+                                             min(td_list),
                                              before_color_set_callbacks,
                                              after_color_set_callbacks,
                                              self.verbose)
@@ -130,7 +133,7 @@ class PatternCounter(object):
                         # print "  Pattern:  ", pattern
                         computeInnerVertexSet(leftChildren, pattern, pat)
                     # Possibly clean up some unneeded data structures
-                    computeInnerVertexSetCleanup(leftChildren)
+                    computeInnerVertexSetCleanup(leftChildren, pat)
                 # Combine child counts (forget case)
                 for pattern in pattern_class.allPatterns(pat,
                                                          decomp.depth()):

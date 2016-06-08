@@ -142,7 +142,7 @@ class BVColorDPTable(DPTable):
         # Update appropriate table entry
         self_table[v_list][pattern1] = patternSum
 
-    def computeInnerVertexSetCleanup(self, leftChildren):
+    def computeInnerVertexSetCleanup(self, leftChildren, mem_motif=None):
         """Free counters after running computeInnerVertexSet"""
         if self.reuse:
             v_last = leftChildren[-1:]

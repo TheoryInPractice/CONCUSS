@@ -31,7 +31,7 @@ class ColorCount(CountCombiner):
         self.totals = Counter()
         self.raw_count = Counter()
         self.tree_depth = self.min_p
-
+        self.n_colors = None
         from lib.pattern_counting.dp import ColorDPTable
         self.table_type = ColorDPTable
 
@@ -41,11 +41,13 @@ class ColorCount(CountCombiner):
 
     def before_color_set(self, colors):
         """Clear the raw_count for the new color set"""
+        self.n_colors = len(colors)
         self.raw_count.clear()
 
     def combine_count(self, count):
         """Add the count returned from dynamic programming on one TDD"""
-        self.raw_count += count
+        if self.tree_depth <= self.n_colors <= self.min_p:
+            self.raw_count += count
 
     def after_color_set(self, colors):
         """Combine the count for this color set into the total count"""

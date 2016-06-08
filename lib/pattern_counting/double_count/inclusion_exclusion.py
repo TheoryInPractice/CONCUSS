@@ -63,6 +63,8 @@ class InclusionExclusion(CountCombiner):
             from lib.pattern_counting.dp import DPTable
             self.table_type = DPTable
 
+        # print self.__in_ex
+
     def table(self, G):
         """Make an appropriate DPTable, given the hints specified"""
         return self.table_type(G)
@@ -70,7 +72,7 @@ class InclusionExclusion(CountCombiner):
     def before_color_set(self, colors):
         """Remember how many colors we're looking at currently"""
         self.n_colors = len(colors)
-
+        print colors
         # If execution data file has been specified
         if self.execdata_file:
             # Reset the count for the color set
@@ -92,8 +94,11 @@ class InclusionExclusion(CountCombiner):
         #     self.pattern_count += self.__in_ex[self.min_p - self.n_colors] * count
         #     self.current_color_set_count += count
 
-        self.pattern_count += self.__in_ex[self.min_p - self.n_colors] * count
-        self.current_color_set_count += count
+        if self.tree_depth <= self.n_colors <= self.min_p:
+            # print self.min_p - self.n_colors
+            # print self.min_p, self.tree_depth, self.n_colors
+            self.pattern_count += self.__in_ex[self.min_p - self.n_colors] * count
+            self.current_color_set_count += count
 
         # return self.__in_ex[self.min_p - self.n_colors] * count
 

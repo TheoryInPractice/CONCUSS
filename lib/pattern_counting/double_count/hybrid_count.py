@@ -131,16 +131,18 @@ class HybridCount(CountCombiner):
         # ColorCount, clear raw_count.
         if self.use_color_dp:
             self.raw_count.clear()
+            self.colors = fc
         # Otherwise, we're going to perform cheaper DP for a larger set.
         else:
             self.colors = fc
 
     def combine_count(self, count):
         """Store the count returned from dynamic programming on one TDD"""
-        if self.use_color_dp:
-            self.raw_count += count
-        else:
-            self.overcount[self.colors] += count
+        if self.tree_depth <= len(self.colors) <= self.min_p:
+            if self.use_color_dp:
+                self.raw_count += count
+            else:
+                self.overcount[self.colors] += count
 
     def after_color_set(self, colors):
         """Combine the count for this color set into the total count"""
