@@ -260,12 +260,10 @@ def parse_multifile(multifile):
                     patterns = [line[:-1] for line in pattern_reader]
                     multi = []
                     td_list = []
-                    #td_lower = sys.maxint
                     for pat in patterns:
                         graph, td = parse_pattern_argument(pat)
                         multi.append(graph)
                         td_list.append(td)
-                        #td_lower = min(td, td_lower)
                     return multi, td_list
             else:
                 print "\nPlease provide a valid multi-pattern file while using argument 'multi'\n"

@@ -300,7 +300,7 @@ class DFSSweep(DecompGenerator):
         # Iterate over its keys to get all components
         for component in comps_at_level.itervalues():
             # Prune component if it has less than p vertices
-            if not self.prune(component, self.p):
+            if not self.prune(component, self.multi_pat_min_p):
                 yield component
 
     def add(self, data, color):

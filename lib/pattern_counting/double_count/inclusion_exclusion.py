@@ -63,8 +63,6 @@ class InclusionExclusion(CountCombiner):
             from lib.pattern_counting.dp import DPTable
             self.table_type = DPTable
 
-        # print self.__in_ex
-
     def table(self, G):
         """Make an appropriate DPTable, given the hints specified"""
         return self.table_type(G)

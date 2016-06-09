@@ -77,7 +77,7 @@ class PatternCounter(object):
         #                                      self.verbose)
 
         self.decomp_generator = decomp_class(G, coloring, len(max(multi, key=len)),
-                                             min(td_list),
+                                             min(td_list), len(min(multi, key=len)),
                                              before_color_set_callbacks,
                                              after_color_set_callbacks,
                                              self.verbose)
