@@ -12,7 +12,7 @@ Count the number of subgraphs of `graph` which are isomorphic to `pattern`.
 Positional arguments:
 
 * `graph` - filename of the host graph
-* `pattern` - filename, basic pattern or `multi`. See basic patterns and multiple-patterns sections below.
+* `pattern` - filename, basic pattern or `multi`. See [basic patterns](#basic-patterns) and [multiple-patterns](#counting-multiple-patterns-in-a-single-concuss-run) sections below.
 * `config` - filename of the configuration settings (defaults to `config/default.cfg`)
 
 Optional arguments:
