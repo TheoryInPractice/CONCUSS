@@ -24,15 +24,15 @@ class MemoizedKPattern(KPattern):
     #       return s
 
     @classmethod
-    def allPatterns(cls, graph, k):
+    def allPatterns(cls, motif, k):
         """Return all k-patterns from a given vertex set"""
         # print [(i, len(j)) for i, j in cls.allPatternLookup.iteritems()]
-        if (graph, k) in cls.allPatternLookup:
-            patterns = cls.allPatternLookup[(graph, k)]
+        if (motif, k) in cls.allPatternLookup:
+            patterns = cls.allPatternLookup[(motif, k)]
         else:
             patterns = []
             # iterate over power set of vertices
-            vertexSet = graph.nodes
+            vertexSet = motif.nodes
             for v_set in xpowerset(vertexSet):
                 # iterate over all possible boundary sizes
                 for boundarySize in range(min([k, len(v_set)])+1):
@@ -43,8 +43,8 @@ class MemoizedKPattern(KPattern):
                         for mapping in itertools.permutations(range(k),
                                                               boundarySize):
                             d = dict(zip(boundary, mapping))
-                            kp = cls(v_set, d, graph)
+                            kp = cls(v_set, d, motif)
                             if kp.isSeparator():
                                 patterns.append(kp)
-            cls.allPatternLookup[(graph, k)] = patterns
+            cls.allPatternLookup[(motif, k)] = patterns
         return iter(patterns)

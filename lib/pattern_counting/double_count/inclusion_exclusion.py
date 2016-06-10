@@ -70,7 +70,6 @@ class InclusionExclusion(CountCombiner):
     def before_color_set(self, colors):
         """Remember how many colors we're looking at currently"""
         self.n_colors = len(colors)
-
         # If execution data file has been specified
         if self.execdata_file:
             # Reset the count for the color set
@@ -88,8 +87,10 @@ class InclusionExclusion(CountCombiner):
         the count.  This modified count gets added into our total.  In the
         end, this corrects all the double-counting.
         """
-        self.pattern_count += self.__in_ex[self.min_p - self.n_colors] * count
-        self.current_color_set_count += count
+
+        if self.tree_depth <= self.n_colors <= self.min_p:
+            self.pattern_count += self.__in_ex[self.min_p - self.n_colors] * count
+            self.current_color_set_count += count
 
     def after_color_set(self, colors):
         # If execution data file has been specified
@@ -100,3 +101,4 @@ class InclusionExclusion(CountCombiner):
     def get_count(self):
         """Return the total number of occurrences of the pattern seen"""
         return self.pattern_count
+

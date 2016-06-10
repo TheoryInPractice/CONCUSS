@@ -120,7 +120,7 @@ class KPattern(object):
                     + str(vString)
         return stringRep
 
-    def inverseJoin(self):
+    def inverseJoin(self, mem_motif=None):
         """Generator of all pattern pairs whose joins give this pattern"""
         # Create set of vertices not on the boundary
         nonBoundaryVertices = self.vertices - self.boundaryVertices
@@ -136,7 +136,7 @@ class KPattern(object):
             if pattern2.isSeparator() and pattern3.isSeparator():
                 yield (pattern2, pattern3)
 
-    def inverseForget(self, i):
+    def inverseForget(self, i, mem_motif=None):
         """
         generator of all patterns that give this pattern when it
         forgets index i
@@ -219,7 +219,7 @@ class KPattern(object):
                     return False
         return True
 
-    def boundaryIter(self):
+    def boundaryIter(self, pat):
         """Returns an iterator to the boundary items"""
         return self.boundary.iteritems()
 

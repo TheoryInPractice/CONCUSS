@@ -6,14 +6,19 @@
 #
 
 import sys
+import os
 import networkx as nx
-from networkx.algorithms import isomorphism
 import cProfile
 import pstats
+from networkx.algorithms import isomorphism
+# In order to import CONCUSS modules, we will need to add CONCUSS to sys.path
+sys.path.insert(0, os.getcwd().split('concuss')[0] + 'concuss')
+from lib.run_pipeline import get_pattern_from_generator, is_basic_pattern
+from lib.graph.graphformats import write_edgelist
 
 # If we're running PyPy, make sure we can load networkx
 if 'PyPy' in sys.version:
-    sys.path.insert(0, '/usr/lib/python2.7/site-packages')
+    sys.path.insert(1, '/usr/lib/python2.7/site-packages')
 
 
 def readGraph(filename, type):
@@ -34,6 +39,7 @@ def readGraph(filename, type):
     else:
         raise Exception("File format .{0} not supported".format(extension))
 
+
 def printProfileStats(name, profile, percent=1.0):
     """
     Prints out the function call statistics using the cProfile and
@@ -53,7 +59,17 @@ def printProfileStats(name, profile, percent=1.0):
 
 if __name__ == "__main__":
     G_file = sys.argv[1]
-    H_file = sys.argv[2]
+    H_name = sys.argv[2]
+
+    # Check to see if we have a basic pattern
+    if is_basic_pattern(H_name):
+        H, _ = get_pattern_from_generator(H_name)
+        with open(H_name + '.txt', 'w') as pattern_file:
+            write_edgelist(H, pattern_file)
+        H_file = H_name + '.txt'
+    else:
+        H_file = H_name
+
     directed = len(sys.argv) > 3
 
     if directed:
@@ -76,5 +92,10 @@ if __name__ == "__main__":
     patternCount = sum([1 for i in matcher.subgraph_isomorphisms_iter()])
 
     print "Number of occurrences of H in G: {0}".format(patternCount)
+
+    # Delete the motif file created (if it exists)
+    if os.path.isfile(H_name + '.txt'):
+        os.remove(H_name + '.txt')
+
     patternProfile.disable()
     printProfileStats("counting patterns", patternProfile)

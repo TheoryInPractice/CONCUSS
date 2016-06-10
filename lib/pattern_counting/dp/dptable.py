@@ -24,7 +24,7 @@ class DPTable(object):
         self.table = defaultdict(lambda: defaultdict(int))
         self.G = G
 
-    def computeLeaf(self, v, pattern1):
+    def computeLeaf(self, v, pattern1, mem_motif=None):
         """
         Compute table entry for a given leaf and k-pattern
 
@@ -37,12 +37,12 @@ class DPTable(object):
         self_isIsomorphism = self.isIsomorphism
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
-        for pattern2 in pattern1.inverseForget(self.G.depth(v)):
-            patternSum += self_isIsomorphism(v, pattern2)
+        for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
+            patternSum += self_isIsomorphism(v, pattern2, mem_motif)
         # Update appropriate table entry
         self.table[(v,)][pattern1] = patternSum
 
-    def computeInnerVertex(self, v, pattern1):
+    def computeInnerVertex(self, v, pattern1, mem_motif=None):
         """
         Compute table entry for a given single non-leaf and k-pattern
 
@@ -57,12 +57,12 @@ class DPTable(object):
         self_table = self.table
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
-        for pattern2 in pattern1.inverseForget(self.G.depth(v)):
+        for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
             patternSum += self_table[tup(g_ch(v))][pattern2]
         # update appropriate table entry
         self_table[(v,)][pattern1] = patternSum
 
-    def computeInnerVertexSet(self, v_list, pattern1):
+    def computeInnerVertexSet(self, v_list, pattern1, mem_motif=None):
         """
         Compute table entry for a given set of vertices and k-pattern
 
@@ -77,13 +77,13 @@ class DPTable(object):
         # Localize variables and functions for faster lookups
         self_table = self.table
         # Iterate through all pattern pairs whose join yields pattern1
-        for pattern2, pattern3 in pattern1.inverseJoin():
+        for pattern2, pattern3 in pattern1.inverseJoin(mem_motif):
             patternSum += (self_table[v_front][pattern2] *
                            self_table[v_last][pattern3])
         # Update appropriate table entry
         self_table[v_list][pattern1] = patternSum
 
-    def computeInnerVertexSetCleanup(self, leftChildren):
+    def computeInnerVertexSetCleanup(self, leftChildren, mem_motif=None):
         pass
 
     def lookup(self, v, pattern):
@@ -134,7 +134,7 @@ class DPTable(object):
                     outputString += str(pattern) + "\n"
         return outputString
 
-    def isIsomorphism(self, v, pattern):
+    def isIsomorphism(self, v, pattern, mem_motif=None):
         """
         Determine whether the root path is an isomorphism to the boundary of
         the k-pattern
@@ -156,7 +156,7 @@ class DPTable(object):
 
         # Create mapping of vertices of H to vertices of G
         HtoGMap = defaultdict(lambda: None)
-        for u, idx in pattern.boundaryIter():
+        for u, idx in pattern.boundaryIter(pattern):
             try:
                 HtoGMap[u] = P_v[idx]
             except IndexError:
