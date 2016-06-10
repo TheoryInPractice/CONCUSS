@@ -49,17 +49,12 @@ class ColorDPTable(DPTable):
             self.freeCounter = ColorDPTable.__freeCounter
         # Else, just make new counters and never get rid of old ones.
         else:
-            #self.getCounter = Counter
             self.getCounter = ColorDPTable.__getCounter
             self.freeCounter = lambda _, mem_motif: None
 
     @classmethod
     def __getCounter(cls, mem_motif, reuse=True):
         """Return an empty counter, either from the list or newly created"""
-        # if cls.__counters:
-        #     return cls.__counters.pop()
-        # else:
-        #     return Counter()
         if reuse and mem_motif in cls.__counters and cls.__counters[mem_motif]:
             return cls.__counters[mem_motif].pop()
 

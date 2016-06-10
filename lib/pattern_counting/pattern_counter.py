@@ -56,13 +56,6 @@ class PatternCounter(object):
         self.dp_table = None
         self.colset_count_file = colset_count_file
 
-        # print [len(motif) for motif in multi]
-        # print td_list
-
-        # self.combiner = combiner_class(len(max(multi, key=len)), coloring, table_hints,
-        #                                td=td_lower,
-        #                                execdata_file=colset_count_file)
-
         self.combiners = [combiner_class(len(multi[idx]), coloring, table_hints, td=td_list[idx],
                                         execdata_file=colset_count_file) for idx in range(len(multi))]
 
@@ -70,11 +63,6 @@ class PatternCounter(object):
         after_color_set_callbacks = [combiner.after_color_set for combiner in self.combiners]
 
         # TODO: calculate a lower bound on treedepth
-        # self.decomp_generator = decomp_class(G, coloring, len(max(multi, key=len)),
-        #                                      self.combiner.tree_depth,
-        #                                      [self.combiner.before_color_set],
-        #                                      [self.combiner.after_color_set],
-        #                                      self.verbose)
 
         self.decomp_generator = decomp_class(G, coloring, len(max(multi, key=len)),
                                              min(td_list), len(min(multi, key=len)),
@@ -89,6 +77,8 @@ class PatternCounter(object):
 
         Arguments:
             decomp:  Treedepth decomposition of a graph
+            pat: The pattern that we are counting
+            idx: The index of our pattern in the multi-pattern list
         """
         # Keep this table if the big component is the current component
         keep_table = (self.big_component is decomp)
@@ -161,17 +151,10 @@ class PatternCounter(object):
     def count_patterns(self):
         """Count the number of occurrences of our pattern in our host graph."""
 
+        # Make a list to store counts of patterns specified
         final_count = [0]*len(self.multi)
+
         # For every TDD given to us by the decomposition generator
-        # tdd_store = [tdd for tdd in self.decomp_generator]
-
-        # for idx, pat in enumerate(self.multi):
-        #     print idx, str(pat)
-        #     print idx, [e for e in pat.edges()]
-        #
-        # import sys
-        # sys.exit(1)
-
         for tdd in self.decomp_generator:
             # Remember the largest component we've seen if we're making
             # visualization output
@@ -187,10 +170,7 @@ class PatternCounter(object):
                 # Combine the count from the TDD
                 self.combiners[idx].combine_count(count)
 
-            # count = self.count_patterns_from_TDD(tdd)
-            # # Combine the count from the TDD
-            # self.combiner.combine_count(count)
-
+        # Populate the list of counts that will be returned
         for idx in range(len(self.multi)):
             final_count[idx] += self.combiners[idx].get_count()
 
@@ -223,5 +203,5 @@ class PatternCounter(object):
                             str(vString) + "; " + str(bString) + "\n")
                 self.dp_table_file.write("}\n")
 
-        # Return the total for the whole graph
+        # Return the totals for the whole graph
         return final_count

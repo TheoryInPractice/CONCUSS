@@ -83,9 +83,6 @@ class BVColorDPTable(DPTable):
         # the depth of v.
         for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
             # patternSum += self.safeLookup(tuple(v.children), pattern2)
-            # print ch_v
-            # print pattern2
-            # print type(self_table[ch_v][pattern2])
             pattern2_in_table = pattern2 in self_table[ch_v]
             if pattern2_in_table:
                 patternSum += self_table[ch_v][pattern2]

@@ -251,23 +251,29 @@ def parse_multifile(multifile):
     :param multifile: The file containing multiple motif descriptions
     :return: An array of pattern graph objects and the lowest treedepth
     """
-
+    # Check if a filename is specified
     if multifile:
         try:
             m_file = multifile[0]
+            # Check if file is not null
             if m_file:
                 with open(m_file, 'r') as pattern_reader:
+                    # Read all patterns in the file
                     patterns = [line[:-1] for line in pattern_reader]
                     multi = []
                     td_list = []
+                    # For each pattern, make a graph object
                     for pat in patterns:
                         graph, td = parse_pattern_argument(pat)
+                        # Store graph and treedepth in lists
                         multi.append(graph)
                         td_list.append(td)
+                    # Return the list
                     return multi, td_list
             else:
                 print "\nPlease provide a valid multi-pattern file while using argument 'multi'\n"
                 sys.exit(1)
+        # Error in opening file
         except IOError:
             print "\nPlease provide a valid multi-pattern file while using argument 'multi'\n"
             sys.exit(1)
@@ -299,8 +305,10 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         readProfile = cProfile.Profile()
         readProfile.enable()
 
+    # Parse the multifile if counting multiple patterns
     if pattern == 'multi':
         multi, td_list = parse_multifile(multifile)
+    # Parse pattern argument
     else:
         basic_pattern = is_basic_pattern(pattern)
         if basic_pattern:
@@ -405,6 +413,8 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
                                      colset_count_file=colset_count_file)
 
     pattern_count = pattern_counter.count_patterns()
+
+    # Patterns have been counted, print output
     if pattern == "multi":
         with open(multifile[0], 'r') as pattern_file:
             pattern_names = [pat[:-1] for pat in pattern_file]
