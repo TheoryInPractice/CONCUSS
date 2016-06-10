@@ -70,8 +70,7 @@ class ColorDPTable(DPTable):
         """Clear a counter and store it in a list for later reuse"""
         if counter:
             counter.clear()
-
-        cls.__counters[mem_motif].append(counter)
+            cls.__counters[mem_motif].append(counter)
 
     def computeLeaf(self, v, pattern1, mem_motif=None):
         """
