@@ -283,7 +283,7 @@ class DFSSweep(DecompGenerator):
 
         # Generate components while also pruning ones we don't need
         for item in comps:
-            if not self.prune(item, self.p):
+            if not self.prune(item, self.multi_pat_min_p):
                 yield item
 
     def component_generator(self, data):
