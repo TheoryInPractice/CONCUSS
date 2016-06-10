@@ -169,11 +169,6 @@ class MemoizedBVKPattern(BVKPattern):
         """
         Return all k-patterns from a given vertex set
         """
-        # print [(i, len(j)) for i, j in cls.allPatternLookup.iteritems()]
-
-        #print "Graph hash:", graph, k, (graph, k).__hash__()
-
-        #print "Calling with graph:", graph, k, (graph, k) in cls.allPatternLookup
 
         if (motif, k) in cls.allPatternLookup:
             patterns = cls.allPatternLookup[(motif, k)]

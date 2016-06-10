@@ -62,7 +62,6 @@ test_pipeline "clique${newargs[1]}"
 
 touch "${path}/graphs/motifs/mfile"
 echo -e "path${newargs[1]}\nstar${newargs[1]}\nclique${newargs[1]}" > "${path}/graphs/motifs/mfile"
-#cat mfile
 test_multi "${path}/graphs/motifs/mfile"
 
 rm "${path}/graphs/motifs/mfile"

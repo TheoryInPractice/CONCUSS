@@ -29,7 +29,7 @@ class ColorDPTable(DPTable):
     InclusionExclusion, so ColorCounts must be used.  Since the CountCom-
     biner decides which DPTable it uses, there isn't a problem.
     """
-    __counters = {}
+    __counters = defaultdict(list)
 
     def __init__(self, G, reuse=True):
         """
@@ -49,33 +49,23 @@ class ColorDPTable(DPTable):
             self.freeCounter = ColorDPTable.__freeCounter
         # Else, just make new counters and never get rid of old ones.
         else:
-            #self.getCounter = Counter
             self.getCounter = ColorDPTable.__getCounter
             self.freeCounter = lambda _, mem_motif: None
 
     @classmethod
     def __getCounter(cls, mem_motif, reuse=True):
         """Return an empty counter, either from the list or newly created"""
-        # if cls.__counters:
-        #     return cls.__counters.pop()
-        # else:
-        #     return Counter()
-        if reuse:
-            if mem_motif in cls.__counters and cls.__counters[mem_motif]:
-                return cls.__counters[mem_motif].pop()
-            else:
-                return Counter()
-        else:
-            return Counter()
+        if reuse and mem_motif in cls.__counters and cls.__counters[mem_motif]:
+            return cls.__counters[mem_motif].pop()
+
+        return Counter()
 
     @classmethod
     def __freeCounter(cls, counter, mem_motif):
         """Clear a counter and store it in a list for later reuse"""
         if counter:
             counter.clear()
-        if mem_motif not in cls.__counters:
-            cls.__counters[mem_motif] = []
-        cls.__counters[mem_motif].append(counter)
+            cls.__counters[mem_motif].append(counter)
 
     def computeLeaf(self, v, pattern1, mem_motif=None):
         """
@@ -114,8 +104,9 @@ class ColorDPTable(DPTable):
         # the depth of v.
         for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
             # patternSum += self.safeLookup(tuple(v.children), pattern2)
-            patternSum_update(self_table[ch_v][pattern2])
-            DPTable_freeCounter(self_table[ch_v][pattern2], mem_motif)
+            if pattern2 in self_table[ch_v]:
+                patternSum_update(self_table[ch_v][pattern2])
+                DPTable_freeCounter(self_table[ch_v][pattern2], mem_motif)
         # Update appropriate table entry
         self_table[(v,)][pattern1] = patternSum
 

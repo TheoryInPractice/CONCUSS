@@ -24,13 +24,14 @@ class DecompGenerator(object):
         """
         return len(component) < min_vertices
 
-    def __init__(self, G, coloring, p, td_H, before_color_set,
+    def __init__(self, G, coloring, p, td_H, multi_pat_min_p, before_color_set,
                  after_color_set, verbose=False):
         """Initialize this object"""
         self.G = G
         self.coloring = coloring
         self.p = p
         self.td_H = td_H
+        self.multi_pat_min_p = multi_pat_min_p
         self.before_color_set = before_color_set
         self.after_color_set = after_color_set
         self.verbose = verbose
