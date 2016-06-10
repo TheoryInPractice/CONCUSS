@@ -40,6 +40,9 @@ def main():
     parser.add_argument("-C", "--coloring-no-verify",
                         help="do not verify correctness of existing coloring",
                         action="store_true")
+    parser.add_argument("-m", "--multi_pat_file", help="File with multiple patterns",
+                        nargs=1, type=str)
+
     parser.add_argument("-e", "--execution-data",
                         help="Output BEAVr execution data in ZIP format to "
                         "EXECUTION_DATA",
@@ -52,7 +55,7 @@ def main():
     # Run the pipeline
     runPipeline(args.graph, args.pattern, args.config, args.coloring,
                 args.coloring_no_verify, args.output, args.verbose,
-                args.profile, args.execution_data)
+                args.profile, args.multi_pat_file, args.execution_data)
 
 if __name__ == "__main__":
     main()

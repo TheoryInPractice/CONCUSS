@@ -73,22 +73,23 @@ class BVHybridCount(HybridCount):
 
     def combine_count(self, count):
         """Store the count returned from dynamic programming on one TDD"""
-        if self.use_color_dp:
-            # Localize variables for the loop
-            field_width = self.tableobj.field_width
-            mask = self.tableobj.mask
-            colors = self.tableobj.colors
-            # For every color set (represented as an integer)
-            for i in range(1 << len(colors)):
-                # Get the count for this subset of colors
-                setcount = (count >> (i * field_width)) & mask
-                # Add it to the counts for the current set of colors if
-                # it's > 0
-                if setcount:
-                    color_set = set()
-                    for c in colors.iterkeys():
-                        if colors[c] & i:
-                            color_set.add(c)
-                    self.raw_count[frozenset(color_set)] += setcount
-        else:
-            self.overcount[self.colors] += count
+        if self.tree_depth <= len(self.colors) <= self.min_p:
+            if self.use_color_dp:
+                # Localize variables for the loop
+                field_width = self.tableobj.field_width
+                mask = self.tableobj.mask
+                colors = self.tableobj.colors
+                # For every color set (represented as an integer)
+                for i in range(1 << len(colors)):
+                    # Get the count for this subset of colors
+                    setcount = (count >> (i * field_width)) & mask
+                    # Add it to the counts for the current set of colors if
+                    # it's > 0
+                    if setcount:
+                        color_set = set()
+                        for c in colors.iterkeys():
+                            if colors[c] & i:
+                                color_set.add(c)
+                        self.raw_count[frozenset(color_set)] += setcount
+            else:
+                self.overcount[self.colors] += count

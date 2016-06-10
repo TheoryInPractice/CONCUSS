@@ -29,7 +29,7 @@ class ColorDPTable(DPTable):
     InclusionExclusion, so ColorCounts must be used.  Since the CountCom-
     biner decides which DPTable it uses, there isn't a problem.
     """
-    __counters = []
+    __counters = defaultdict(list)
 
     def __init__(self, G, reuse=True):
         """
@@ -42,32 +42,32 @@ class ColorDPTable(DPTable):
         """
         self.table = defaultdict(lambda: defaultdict(Counter))
         self.G = G
-
+        self.reuse = reuse
         # If we got reuse=True, store unused Counters for reuse.
         if reuse:
             self.getCounter = ColorDPTable.__getCounter
             self.freeCounter = ColorDPTable.__freeCounter
         # Else, just make new counters and never get rid of old ones.
         else:
-            self.getCounter = Counter
-            self.freeCounter = lambda _: None
+            self.getCounter = ColorDPTable.__getCounter
+            self.freeCounter = lambda _, mem_motif: None
 
     @classmethod
-    def __getCounter(cls):
+    def __getCounter(cls, mem_motif, reuse=True):
         """Return an empty counter, either from the list or newly created"""
-        if cls.__counters:
-            return cls.__counters.pop()
-        else:
-            return Counter()
+        if reuse and mem_motif in cls.__counters and cls.__counters[mem_motif]:
+            return cls.__counters[mem_motif].pop()
+
+        return Counter()
 
     @classmethod
-    def __freeCounter(cls, counter):
+    def __freeCounter(cls, counter, mem_motif):
         """Clear a counter and store it in a list for later reuse"""
         if counter:
             counter.clear()
-        cls.__counters.append(counter)
+            cls.__counters[mem_motif].append(counter)
 
-    def computeLeaf(self, v, pattern1):
+    def computeLeaf(self, v, pattern1, mem_motif=None):
         """
         Compute table entry for a given leaf and k-pattern
 
@@ -75,18 +75,18 @@ class ColorDPTable(DPTable):
                 v:  leaf Vertex
                 pattern1:  kPattern
         """
-        patternSum = self.getCounter()
+        patternSum = self.getCounter(mem_motif, self.reuse)
         # Localize functions to speed up the loop
         self_isIsomorphism = self.isIsomorphism
         patternSum_update = patternSum.update
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
-        for pattern2 in pattern1.inverseForget(self.G.depth(v)):
-            patternSum_update(self_isIsomorphism(v, pattern2))
+        for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
+            patternSum_update(self_isIsomorphism(v, pattern2, mem_motif))
         # Update appropriate table entry
         self.table[(v,)][pattern1] = patternSum
 
-    def computeInnerVertex(self, v, pattern1):
+    def computeInnerVertex(self, v, pattern1, mem_motif=None):
         """
         Compute table entry for a given single non-leaf and k-pattern
 
@@ -94,7 +94,7 @@ class ColorDPTable(DPTable):
                 v:  leaf Vertex
                 pattern1:  kPattern
         """
-        patternSum = self.getCounter()
+        patternSum = self.getCounter(mem_motif, self.reuse)
         # Localize functions to speed up the loop
         self_table = self.table
         ch_v = tuple(self.G.children(v))
@@ -102,14 +102,15 @@ class ColorDPTable(DPTable):
         patternSum_update = patternSum.update
         # Iterate through all patterns that become pattern1 when they forget
         # the depth of v.
-        for pattern2 in pattern1.inverseForget(self.G.depth(v)):
+        for pattern2 in pattern1.inverseForget(self.G.depth(v), mem_motif):
             # patternSum += self.safeLookup(tuple(v.children), pattern2)
-            patternSum_update(self_table[ch_v][pattern2])
-            DPTable_freeCounter(self_table[ch_v][pattern2])
+            if pattern2 in self_table[ch_v]:
+                patternSum_update(self_table[ch_v][pattern2])
+                DPTable_freeCounter(self_table[ch_v][pattern2], mem_motif)
         # Update appropriate table entry
         self_table[(v,)][pattern1] = patternSum
 
-    def computeInnerVertexSet(self, v_list, pattern1):
+    def computeInnerVertexSet(self, v_list, pattern1, mem_motif=None):
         """
         Compute table entry for a given set of vertices and k-pattern
 
@@ -117,14 +118,14 @@ class ColorDPTable(DPTable):
                 v_list:  ordered iterable of Vertex
                 pattern1:  kPattern
         """
-        patternSum = self.getCounter()
+        patternSum = self.getCounter(mem_motif, self.reuse)
         # Split last vertex from the rest
         v_last = v_list[-1:]
         v_front = v_list[:-1]
         # Localize the table to speed up the loop
         self_table = self.table
         # Iterate through all pattern pairs whose join yields pattern1.
-        for pattern2, pattern3 in pattern1.inverseJoin():
+        for pattern2, pattern3 in pattern1.inverseJoin(mem_motif):
             # patternSum += self.safeLookup(v_front, pattern2)*
             #                               self.safeLookup(v_last, pattern3)
             for pair in product(self_table[v_front][pattern2].iteritems(),
@@ -133,15 +134,17 @@ class ColorDPTable(DPTable):
         # Update appropriate table entry
         self_table[v_list][pattern1] = patternSum
 
-    def computeInnerVertexSetCleanup(self, leftChildren):
+    def computeInnerVertexSetCleanup(self, leftChildren, mem_motif=None):
         """Free counters after running computeInnerVertexSet"""
         v_last = leftChildren[-1:]
         v_front = leftChildren[:-1]
+        motif_arg_last = [mem_motif]*len(self.table[v_last])
+        motif_arg_front = [mem_motif]*len(self.table[v_front])
         freeCounter = self.freeCounter
-        map(freeCounter, self.table[v_last].itervalues())
-        map(freeCounter, self.table[v_front].itervalues())
+        map(freeCounter, self.table[v_last].itervalues(), motif_arg_last)
+        map(freeCounter, self.table[v_front].itervalues(), motif_arg_front)
 
-    def isIsomorphism(self, v, pattern):
+    def isIsomorphism(self, v, pattern, mem_motif=None):
         """
         Determine whether the root path is an isomorphism to the boundary of
         the k-pattern
@@ -163,7 +166,7 @@ class ColorDPTable(DPTable):
 
         # Create mapping of vertices of H to vertices of G
         HtoGMap = defaultdict(lambda: None)
-        for u, idx in pattern.boundaryIter():
+        for u, idx in pattern.boundaryIter(mem_motif):
             try:
                 HtoGMap[u] = P_v[idx]
             except IndexError:

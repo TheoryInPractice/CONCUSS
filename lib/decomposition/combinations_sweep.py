@@ -62,7 +62,7 @@ class CombinationsSweep(DecompGenerator):
 
                 # Yield the component
                 for component in self.G.get_components(self.coloredVertices):
-                    if not self.prune(component, self.p):
+                    if not self.prune(component, self.multi_pat_min_p):
                         yield component
 
                 # Processing to be done after we are done generating components

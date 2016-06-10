@@ -21,6 +21,7 @@ from lib.graph.graphformats import load_graph as load_graph
 from lib.pattern_counting.pattern_counter import PatternCounter
 from lib.graph.graph import Coloring
 import lib.graph.pattern_generator as pattern_gen
+from lib.graph.pattern_generator import clique, path, star
 from lib.graph.treedepth import treedepth
 
 
@@ -83,8 +84,12 @@ def p_centered_coloring(graph, td, cfgfile, verbose, execdata):
     return col
 
 
-def pattern_argument_error_msg():
-    print "\nThe argument provided for 'pattern' is invalid.\n"
+def pattern_argument_error_msg(pat_arg):
+    """
+    Prints error message when pattern argument is invalid and exits the program
+    """
+
+    print "\nThe argument '" + pat_arg + "' provided for 'pattern' is invalid.\n"
     print "Please use format:\n\n" \
           "\033[1mfilename.txt \033[0m\n" \
           "For example: ./path_to_file/K3.txt" \
@@ -102,23 +107,41 @@ def pattern_argument_error_msg():
 
 
 def is_basic_pattern(pattern):
+    """
+    Checks if a given pattern is a valid basic pattern
+    :param pattern: The pattern to be checked
+    :return: True if pattern is a valid basic pattern, False otherwise
+    """
+
     name, ext = os.path.splitext(pattern)
     return ext == ""
 
 
 def get_pattern_from_file(filename):
+    """
+    Load pattern from a file
+    :param filename: The name of the pattern file
+    :return: A graph object representing the pattern along with its treedepth
+    """
+
     # Argument is a filename
-        try:
-            # Try to load the graph from file
-            H = load_graph(filename)
-            # Return pattern along with lower bound on its treedepth
-            return H, treedepth(H)
-        except Exception:
-            # Invalid file extension
-            pattern_argument_error_msg()
+    try:
+        # Try to load the graph from file
+        H = load_graph(filename)
+        # Return pattern along with lower bound on its treedepth
+        return H, treedepth(H)
+    except Exception:
+        # Invalid file extension
+        pattern_argument_error_msg(filename)
 
 
 def get_pattern_from_generator(pattern):
+    """
+    Get pattern from pattern generator since basic pattern was specified
+    :param pattern: Name of basic pattern
+    :return: Pattern graph and its treedepth
+    """
+
     import re
     p = re.compile(r'(\d*)')
     # Parse out the different parts of the argument
@@ -136,7 +159,7 @@ def get_pattern_from_generator(pattern):
             # Return the pattern along with its treedepth
             return H, treedepth(H, args[0], pattern_num_vertices)
         except KeyError:
-            pattern_argument_error_msg()
+            pattern_argument_error_msg(pattern)
 
     # Bipartite pattern type provided
     elif len(args) == 3 and args[0] in pattern_gen.bipartite_patterns:
@@ -152,10 +175,11 @@ def get_pattern_from_generator(pattern):
             return H, treedepth(H, args[0], m, n)
         except (KeyError, ValueError):
             # Invalid sizes provided
-            pattern_argument_error_msg()
+            pattern_argument_error_msg(pattern)
     else:
         # Number of vertices not provided in argument
-        pattern_argument_error_msg()
+        pattern_argument_error_msg(pattern)
+
 
 def parse_pattern_argument(pattern):
     """
@@ -189,7 +213,7 @@ def parse_pattern_argument(pattern):
                 # Return the pattern along with its treedepth
                 return H, treedepth(H, args[0], pattern_num_vertices)
             except KeyError:
-                pattern_argument_error_msg()
+                pattern_argument_error_msg(pattern)
 
         # Bipartite pattern type provided
         elif len(args) == 3 and args[0] in pattern_gen.bipartite_patterns:
@@ -205,10 +229,10 @@ def parse_pattern_argument(pattern):
                 return H, treedepth(H, args[0], m, n)
             except (KeyError, ValueError):
                 # Invalid sizes provided
-                pattern_argument_error_msg()
+                pattern_argument_error_msg(pattern)
         else:
             # Number of vertices not provided in argument
-            pattern_argument_error_msg()
+            pattern_argument_error_msg(pattern)
     else:
         # Argument is a filename
         try:
@@ -218,15 +242,57 @@ def parse_pattern_argument(pattern):
             return H, treedepth(H)
         except Exception:
             # Invalid file extension
-            pattern_argument_error_msg()
+            pattern_argument_error_msg(pattern)
+
+
+def parse_multifile(multifile):
+    """
+    Parse the multiple motif file provided
+    :param multifile: The file containing multiple motif descriptions
+    :return: An array of pattern graph objects and the lowest treedepth
+    """
+    # Check if a filename is specified
+    if multifile:
+        try:
+            m_file = multifile[0]
+            # Check if file is not null
+            if m_file:
+                with open(m_file, 'r') as pattern_reader:
+                    # Read all patterns in the file
+                    patterns = [line[:-1] for line in pattern_reader]
+                    multi = []
+                    td_list = []
+                    # For each pattern, make a graph object
+                    for pat in patterns:
+                        graph, td = parse_pattern_argument(pat)
+                        # Store graph and treedepth in lists
+                        multi.append(graph)
+                        td_list.append(td)
+                    # Return the list
+                    return multi, td_list
+            else:
+                print "\nPlease provide a valid multi-pattern file while using argument 'multi'\n"
+                sys.exit(1)
+        # Error in opening file
+        except IOError:
+            print "\nPlease provide a valid multi-pattern file while using argument 'multi'\n"
+            sys.exit(1)
+    else:
+        print "\nPlease provide a valid multi-pattern file while using argument 'multi'\n"
+        sys.exit(1)
 
 
 def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
-                verbose, profile, execution_data):
+                verbose, profile, multifile, execution_data):
     """Basic running of the pipeline"""
 
-    # If execution_data flag is set
+    # Check if execution_data flag is set
     execdata = execution_data is not None
+
+    if execdata and pattern == "multi":
+        print "CONCUSS does not support outputting execution data while using the multi-motif flag"
+        sys.exit(1)
+
     if execdata:
         # Check if directory exists already
         if os.path.isdir("./execdata"):
@@ -239,16 +305,22 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
         readProfile = cProfile.Profile()
         readProfile.enable()
 
-    basic_pattern = is_basic_pattern(pattern)
-
-    if basic_pattern:
-        H, td_lower = get_pattern_from_generator(pattern)
+    # Parse the multifile if counting multiple patterns
+    if pattern == 'multi':
+        multi, td_list = parse_multifile(multifile)
+    # Parse pattern argument
     else:
-        H, td_lower = get_pattern_from_file(pattern)
+        basic_pattern = is_basic_pattern(pattern)
+        if basic_pattern:
+            H, td_lower = get_pattern_from_generator(pattern)
+        else:
+            H, td_lower = get_pattern_from_file(pattern)
+        multi = [H]
+        td_list = [td_lower]
 
     # Read graphs from file
     G = load_graph(graph)
-    td = len(H)
+    td = len(max(multi, key=len))
 
     G_path, G_local_name = os.path.split(graph)
     G_name, G_extension = os.path.splitext(G_local_name)
@@ -320,10 +392,16 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
     if count_name != "InclusionExclusion" and execdata:
         print "CONCUSS can only output execution data using the",
         print "InclusionExclusion combiner class."
+
+        # Check if there is incomplete execution data written
+        if os.path.isdir("./execdata"):
+            # delete it, if it does exist
+            shutil.rmtree("./execdata")
+
+        # Exit the program with an error code of 1
         sys.exit(1)
 
-    # Count patterns
-    pattern_counter = PatternCounter(G, H, td_lower, coloring,
+    pattern_counter = PatternCounter(G, multi, td_list, coloring,
                                      pattern_class=patternClass,
                                      table_hints=table_hints,
                                      decomp_class=sweep_class,
@@ -333,8 +411,17 @@ def runPipeline(graph, pattern, cfgFile, colorFile, color_no_verify, output,
                                      tdd_file=tdd_file,
                                      dp_table_file=dp_table_file,
                                      colset_count_file=colset_count_file)
-    patternCount = pattern_counter.count_patterns()
-    print "Number of occurrences of H in G: {0}".format(patternCount)
+
+    pattern_count = pattern_counter.count_patterns()
+
+    # Patterns have been counted, print output
+    if pattern == "multi":
+        with open(multifile[0], 'r') as pattern_file:
+            pattern_names = [pat[:-1] for pat in pattern_file]
+    else:
+        pattern_names = [pattern]
+    for i in range(len(pattern_names)):
+        print "Number of occurrences of {0} in G: {1}".format(pattern_names[i], pattern_count[i])
 
     if execdata:
         # Close count stage files

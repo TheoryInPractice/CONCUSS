@@ -1,3 +1,5 @@
+#!/usr/bin/python2.7
+
 #
 # This file is part of CONCUSS, https://github.com/theoryinpractice/concuss/,
 # and is Copyright (C) North Carolina State University, 2015. It is licensed
@@ -141,7 +143,7 @@ class BVKPattern(KPattern):
         stringRep = "Boundary: " + str(bString) + "; Vertices: " + str(vString)
         return stringRep
 
-    def inverseJoin(self):
+    def inverseJoin(self, mem_motif=None):
         """Generator of all pattern pairs whose joins give this pattern"""
         nonBoundaryVertices = self.vertices - self.boundaryVertices
         for v_set in range(2 ** self.k):
@@ -154,7 +156,7 @@ class BVKPattern(KPattern):
                 if pattern2.isSeparator() and pattern3.isSeparator:
                     yield (pattern2, pattern3)
 
-    def inverseForget(self, i):
+    def inverseForget(self, i, mem_motif=None):
         """
         Generator of all patterns that give this pattern when it forgets index
         i
@@ -242,7 +244,7 @@ class BVKPattern(KPattern):
                         return False
         return True
 
-    def boundaryIter(self):
+    def boundaryIter(self, mem_motif=None):
         """Returns an iterator to the boundary items"""
         for i in range(self.k):
             entry = (self.boundary >> i*self.idBitLength) & self.nullMask

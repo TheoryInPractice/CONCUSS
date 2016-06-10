@@ -12,7 +12,7 @@ class ForwardDPTable(DPTable):
     def __init__(self, G):
         super(ForwardDPTable, self).__init__(G)
 
-    def computeLeaf(self, v, pattern1):
+    def computeLeaf(self, v, pattern1, mem_motif=None):
         """
         Compute contributions of a given k-pattern to the DP
         table for a given leaf
@@ -32,7 +32,7 @@ class ForwardDPTable(DPTable):
             # update appropriate table entry
             self.table[(v,)][pattern2] += isomorphismCount
 
-    def computeInnerVertex(self, v, pattern1):
+    def computeInnerVertex(self, v, pattern1, mem_motif=None):
         """
         Compute contributions of a given k-pattern to a single non-leaf
 
@@ -51,7 +51,7 @@ class ForwardDPTable(DPTable):
             self.table[(v,)][pattern2] += self.lookup(
                 tuple(self.G.children(v)), pattern1)
 
-    def computeInnerVertexSet(self, v_list, pattern1):
+    def computeInnerVertexSet(self, v_list, pattern1, mem_motif=None):
         """
         Compute table entry for a given set of vertices and k-pattern
 

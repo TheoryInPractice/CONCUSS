@@ -277,13 +277,13 @@ class DFSSweep(DecompGenerator):
                 # Flexible  comps[root] = {root}
                 if root >= len(comps):
                     comps.extend([{x} for x in range(len(comps), root)])
-                    comps.insert(root,{root})
+                    comps.insert(root, {root})
 
                 comps[root].add(idx)
 
         # Generate components while also pruning ones we don't need
         for item in comps:
-            if not self.prune(item, self.p):
+            if not self.prune(item, self.multi_pat_min_p):
                 yield item
 
     def component_generator(self, data):
@@ -300,7 +300,7 @@ class DFSSweep(DecompGenerator):
         # Iterate over its keys to get all components
         for component in comps_at_level.itervalues():
             # Prune component if it has less than p vertices
-            if not self.prune(component, self.p):
+            if not self.prune(component, self.multi_pat_min_p):
                 yield component
 
     def add(self, data, color):

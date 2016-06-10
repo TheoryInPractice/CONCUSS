@@ -48,25 +48,27 @@ class BVColorCount(CountCombiner):
 
     def combine_count(self, count):
         """Add the count returned from dynamic programming on one TDD"""
-        # Localize variables for the loop
-        field_width = self.tableobj.field_width
-        mask = self.tableobj.mask
-        colors = self.tableobj.colors
-        # For every color set (represented as an integer)
-        for i in range(1 << len(colors)):
-            # Get the count for this subset of colors
-            setcount = (count >> (i * field_width)) & mask
-            # Add it to the counts for the current set of colors if it's > 0
-            if setcount:
-                color_set = set()
-                for c in colors.iterkeys():
-                    if colors[c] & i:
-                        color_set.add(c)
-                self.raw_count[frozenset(color_set)] += setcount
+        if self.tree_depth <= len(self.colors) <= self.min_p:
+            # Localize variables for the loop
+            field_width = self.tableobj.field_width
+            mask = self.tableobj.mask
+            colors = self.tableobj.colors
+            # For every color set (represented as an integer)
+            for i in range(1 << len(colors)):
+                # Get the count for this subset of colors
+                setcount = (count >> (i * field_width)) & mask
+                # Add it to the counts for the current set of colors if it's > 0
+                if setcount:
+                    color_set = set()
+                    for c in colors.iterkeys():
+                        if colors[c] & i:
+                            color_set.add(c)
+                    self.raw_count[frozenset(color_set)] += setcount
 
     def after_color_set(self, colors):
         """Combine the count for this color set into the total count"""
-        self.totals |= self.raw_count
+        if self.tree_depth <= len(self.colors) <= self.min_p:
+            self.totals |= self.raw_count
 
     def get_count(self):
         """Return the total number of occurrences of the pattern seen"""
