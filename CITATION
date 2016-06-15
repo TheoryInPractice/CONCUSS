@@ -5,26 +5,30 @@ Citations
 Software Citation
 =================
 
-If you use the CONCUSS software, you must cite:
+If you use the latest version of the CONCUSS software, you must cite:
 
-M.P. O'Brien, C.G. Hobbs, K. Jasnick, F. Reidl, N.G. Rodrigues, and B.D. Sullivan. (2015). 
-CONCUSS: Version 1.0. Zenodo. 10.5281/zenodo.30281 
+M.P. O'Brien, C.G. Hobbs, K. Jasnick, F. Reidl, N.G. Rodrigues, and B.D. Sullivan. (2016). 
+CONCUSS: Version 2.0. Zenodo. 10.5281/zenodo.55690 
 
 ..code-block::tex
 
-@misc{CONCUSS_v1.0,
+@misc{CONCUSS_v2.0,
   author       = {Michael P. O'Brien and
                   Clayton G. Hobbs and
-                  Kevin Jasnick  and
+                  Kevin Jasnick and
                   Felix Reidl and
+                  Brandon Mork and
                   Nishant G. Rodrigues and
                   Blair D. Sullivan},
-  title        = {CONCUSS: Version 1.0},
-  month        = sep,
-  year         = 2015,
-  doi          = {10.5281/zenodo.30281},
-  url          = {http://dx.doi.org/10.5281/zenodo.30281}
+  title        = {CONCUSS: Version 2.0},
+  month        = jun,
+  year         = 2016,
+  doi          = {10.5281/zenodo.55690},
+  url          = {http://dx.doi.org/10.5281/zenodo.55690}
 }
+
+For previous versions, please use citation information archived on Zenodo:
+Version 1.0: https://zenodo.org/record/30281
 
 If you use any of our published algorithms or heuristics you should *also*
 cite the relevant paper(s) as directed below.
