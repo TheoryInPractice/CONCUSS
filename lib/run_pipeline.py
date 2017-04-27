@@ -60,11 +60,13 @@ def coloring_from_file(filename, graph, td, cfgfile, verbose, verify=False):
                                            'low_degree_orientation'))
         ctd = import_colmodules(Config.get('color',
                                            'check_tree_depth'))
-        orig, _ = graph.normalize()
-
+        orig, mapping = graph.normalize()
+        norm_col = Coloring()
+        for v in orig:
+            norm_col[v] = coloring[mapping[v]]
         correct = True
         try:
-            correct, _ = ctd(orig, ldo(orig), coloring, td)
+            correct, _ = ctd(orig, ldo(orig), norm_col, td)
         except TypeError:
             correct = False
         assert correct, \
